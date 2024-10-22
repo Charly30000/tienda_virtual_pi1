@@ -1,0 +1,18 @@
+# Utiliza la imagen de OpenJDK 21
+FROM openjdk:21-jdk-slim
+
+# Instala Maven
+RUN apt-get update && apt-get install -y maven
+
+# Establece el directorio de trabajo
+WORKDIR /app
+
+# Copia solo el archivo pom.xml y descarga las dependencias
+COPY backtiendavirtual/pom.xml ./
+RUN mvn dependency:go-offline
+
+# Expone el puerto 8080
+EXPOSE 8080
+
+# Comando para ejecutar la aplicación
+CMD ["mvn", "spring-boot:run"]
