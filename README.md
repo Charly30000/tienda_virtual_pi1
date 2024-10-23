@@ -35,10 +35,12 @@ El backend es una imagen de Java 21, donde la aplicacion esta montada en Springb
 La utilización de esta versión de Java es debido a que actualmente es la versión mas estable para ejecutar Springboot.
 Este contenedor esta asociado directamente a la base de datos para que pueda conectarse directamente a esta.
 
+Estaremos utilizando JPA para el tema de la comunicacion con la Base de datos, esto quiere decir que será el propio backend el responsable del mantenimiento de la base de datos, eliminando asi la necesidad de la creacion de complejas querys y asegurandonos de que los datos solicitados a la BBDD siempre esten optimizados, logrando asi trabajar directamente con objetos en las querys en vez de con complejos datos que puedan llegar a alargarse y complicar su comprendimiento.
+
 - El backend está configurado para funcionar en el puerto 8080
 
 ### Frontend
-El frontend es una imagen de node 20.18.0, donde la aplicacion esta montada en React, utilizando Vite para su creacion y desarrollo
+El frontend es una imagen de node 20.18.0, donde la aplicacion esta montada en React, utilizando Vite para su creacion y desarrollo.
 Este contenedor esta asociado directamente al backend para que pueda conectarse directamente a este
 
 - El frontend está configurado para funcionar en el puerto 3000
