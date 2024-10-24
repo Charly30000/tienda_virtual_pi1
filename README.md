@@ -54,7 +54,7 @@ Con esto conseguimos que el desarrollador pueda mantener todos los datos de prue
 
 - La base de datos está configurada para funcionar en el puerto 3306
 
-# Levantar la app
+# Levantar entorno de desarrollo
 Se levantará todo el entorno de desarrollo, tanto el backend, frontend y BBDD
 
 ```bash
@@ -67,4 +67,11 @@ Elimina los contenedores y las imagenes de docker que existan
 ```bash
 docker-compose down --rmi all
 docker system prune -f
+```
+
+# Levantar entorno de produccion
+Se levantará todo el entorno de produccion, tanto el backend, frontend y BBDD
+
+```bash
+docker-compose -f docker-compose.prod.yml up --build
 ```

@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile-backend.prod
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/tienda_virtual
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_DDL_AUTO=update
+      - SPRING_DATASOURCE_SQL_DEBUG=debug
+      - SPRING_DATASOURCE_SPRING_HTTP_DEBUG=debug
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-frontend.prod
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  db:
+    image: mysql:8.0.40-debian
+    restart: always
+    environment:
+      MYSQL_DATABASE: tienda_virtual
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  mysql_data:
