@@ -37,6 +37,8 @@ Este contenedor esta asociado directamente a la base de datos para que pueda con
 
 Estaremos utilizando JPA para el tema de la comunicacion con la Base de datos, esto quiere decir que será el propio backend el responsable del mantenimiento de la base de datos, eliminando asi la necesidad de la creacion de complejas querys y asegurandonos de que los datos solicitados a la BBDD siempre esten optimizados, logrando asi trabajar directamente con objetos en las querys en vez de con complejos datos que puedan llegar a alargarse y complicar su comprendimiento.
 
+Los archivos que se suban al frontal (tales como las imagenes del usuario), se almacenarán en la carpeta "_uploads_" del host, lo que asegurará que aunque se eliminen los contenedores y volumenes de docker, todos estos datos sigan persistiendo.
+
 - El backend está configurado para funcionar en el puerto 8080
 
 ### Frontend
