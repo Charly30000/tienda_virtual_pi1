@@ -1,17 +1,26 @@
 # Utiliza la imagen de OpenJDK 21
 FROM openjdk:21-jdk-slim
 
-# Copia y descarga las dependencias de Maven
-COPY backtiendavirtual/pom.xml /app/
-WORKDIR /app
-RUN apt-get update && apt-get install -y maven && mvn dependency:go-offline
+# Instala curl para descargar wait-for-it y maven para compilar
+RUN apt-get update && apt-get install -y curl maven
 
-# Copia el código fuente y compila el JAR
-COPY backtiendavirtual /app
+# Añade el script wait-for-it.sh para esperar que MySQL esté disponible
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
+# Establece el directorio de trabajo
+WORKDIR /app
+
+# Copia el archivo pom.xml y descarga las dependencias de Maven en modo offline
+COPY backtiendavirtual/pom.xml ./
+RUN mvn dependency:go-offline
+
+# Copia todo el código fuente y compila el JAR
+COPY backtiendavirtual ./
 RUN mvn clean package -DskipTests
 
 # Expone el puerto 8080
 EXPOSE 8080
 
-# Ejecuta la aplicación usando el archivo JAR generado
-CMD ["java", "-jar", "target/backtiendavirtual-0.0.1-SNAPSHOT.jar"]
+# Comando para ejecutar la aplicación
+CMD ["wait-for-it.sh", "db:3306", "--", "java", "-jar", "target/backtiendavirtual-0.0.1-SNAPSHOT.jar"]

@@ -18,6 +18,7 @@ services:
       - SPRING_DATASOURCE_SPRING_HTTP_DEBUG=debug
     depends_on:
       - db
+    restart: always
 
   frontend:
     build:
