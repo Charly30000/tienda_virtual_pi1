@@ -67,6 +67,7 @@ Elimina los contenedores y las imagenes de docker que existan
 ```bash
 docker-compose down --rmi all
 docker system prune -f
+docker volume rm $(docker volume ls -q)
 ```
 
 # Levantar entorno de produccion
