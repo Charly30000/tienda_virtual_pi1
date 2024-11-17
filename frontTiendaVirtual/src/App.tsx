@@ -9,7 +9,6 @@ function App() {
       const data = await axios.get("http://localhost:8080/api/hello");
       console.log(data.data);
       setData(data.data);
-      console.log("hola!")
     };
     init();
   }, []);
