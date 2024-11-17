@@ -14,10 +14,11 @@ import jakarta.validation.constraints.Size;
 @Table(name = "products")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private Long id;
 
     @NotEmpty
+    @Size(min = 3)
     private String name;
 
     @Min(0)
