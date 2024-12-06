@@ -22,7 +22,7 @@ public class Role {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String rol;
+    private String name;
 
     @JsonIgnoreProperties({"roles", "handler", "hibernateLazyInitializer"})
     @JsonIgnore
@@ -36,8 +36,8 @@ public class Role {
         }
     }
 
-    public Role(String rol) {
-        this.rol = rol;
+    public Role(String name) {
+        this.name = name;
         if (this.users == null) {
             this.users = new ArrayList<>();
         }
@@ -52,12 +52,12 @@ public class Role {
         this.id = id;
     }
 
-    public String getRol() {
-        return rol;
+    public String getName() {
+        return name;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<User> getUsers() {
@@ -73,7 +73,7 @@ public class Role {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((rol == null) ? 0 : rol.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 
@@ -91,10 +91,10 @@ public class Role {
                 return false;
         } else if (!id.equals(other.id))
             return false;
-        if (rol == null) {
-            if (other.rol != null)
+        if (name == null) {
+            if (other.name != null)
                 return false;
-        } else if (!rol.equals(other.rol))
+        } else if (!name.equals(other.name))
             return false;
         return true;
     }
