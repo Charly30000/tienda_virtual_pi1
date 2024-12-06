@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,15 +42,16 @@ public class UserController {
             return validation(result);
         }
 
-        if (service.findByUsername(user.getUsername()).isPresent()) {
+        Optional<User> userBBDD = service.findByUsername(user.getUsername());
+        if (userBBDD.isPresent()) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "El usuario que intentas introducir ya existe");
             response.put("error", true);
             response.put("status", 409);
             return ResponseEntity.status(409).body(response);
         }
-
-        if (service.findByEmail(user.getEmail()).isPresent()) {
+        userBBDD = service.findByEmail(user.getEmail());
+        if (userBBDD.isPresent()) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "El email que intentas introducir ya existe");
             response.put("error", true);
@@ -59,7 +61,7 @@ public class UserController {
 
         List<Role> roles = new ArrayList<>();
         roles.add(new Role(ConstantsRoles.ROLE_USER));
-        User newUser = new User(user.getUsername(), user.getEmail(), user.getPassword(), false, roles);
+        User newUser = new User(user.getUsername(), user.getEmail(), user.getPassword(), true, roles);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(newUser));
     }
 

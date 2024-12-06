@@ -17,6 +17,7 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 300)
     @NotBlank
     @Size(min = 3, max = 300)
-    @Email
+    // @Email
     private String email;
 
     @Column(name = "password", nullable = false, length = 60)
@@ -46,9 +47,8 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Column(name = "is_blocked", nullable = false)
-    @JsonProperty("isBlocked")
-    private Boolean isBlocked;
+    @Column(name = "enabled", nullable = false)
+	private boolean enabled;
 
     @Transient
     @JsonProperty("isBussiness")
@@ -69,15 +69,17 @@ public class User {
     private List<Role> roles;
 
     public User() {
-        roles = new ArrayList<>();
+        if (this.roles == null) {
+            roles = new ArrayList<>();
+        }
     }
 
     public User(@NotBlank @Size(min = 3, max = 50) String username, @NotBlank @Size(min = 3, max = 300) String email,
-            @NotBlank @Size(min = 8, max = 60) String password, Boolean isBlocked, List<Role> roles) {
+            @NotBlank @Size(min = 8, max = 60) String password, boolean enabled, List<Role> roles) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.isBlocked = isBlocked;
+        this.enabled = enabled;
         this.roles = roles;
         if (this.roles == null) {
             roles = new ArrayList<>();
@@ -117,12 +119,12 @@ public class User {
         this.password = password;
     }
 
-    public Boolean getIsBlocked() {
-        return isBlocked;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setIsBlocked(Boolean isBlocked) {
-        this.isBlocked = isBlocked;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public List<Role> getRoles() {
@@ -151,13 +153,11 @@ public class User {
 
     @PrePersist
     public void prePersist() {
-        boolean hasRoleAdmin = getRoles().stream().anyMatch(role -> ConstantsRoles.ROLE_ADMIN.equals(role.getRol()));
-        boolean hasRoleBussiness = getRoles().stream().anyMatch(role -> ConstantsRoles.ROLE_BUSSINESS.equals(role.getRol()));
+        boolean hasRoleAdmin = getRoles().stream().anyMatch(role -> ConstantsRoles.ROLE_ADMIN.equals(role.getName()));
+        boolean hasRoleBussiness = getRoles().stream().anyMatch(role -> ConstantsRoles.ROLE_BUSSINESS.equals(role.getName()));
         setIsAdmin(hasRoleAdmin);
         setIsBussiness(hasRoleBussiness);
-        if (isBlocked == null) {
-            isBlocked = false;
-        }
+        this.enabled = true;
     }
 
     @Override

@@ -19,12 +19,12 @@ import com.tienda.virtual.backtiendavirtual.repositories.UserRepository;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional(readOnly = true)
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User save(User user) {
-        Optional<Role> optionalRoleUser = roleRepository.findByRol(ConstantsRoles.ROLE_USER);
+        Optional<Role> optionalRoleUser = roleRepository.findByName(ConstantsRoles.ROLE_USER);
         List<Role> roles = new ArrayList<>();
         optionalRoleUser.ifPresent(roles::add);
 
