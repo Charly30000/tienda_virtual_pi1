@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tienda.virtual.backtiendavirtual.constants.ConstantsRoles;
 import com.tienda.virtual.backtiendavirtual.constants.TokenJwtConfig;
 import com.tienda.virtual.backtiendavirtual.entities.User;
 
@@ -69,7 +71,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = user.getUsername();
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
         Claims claims = Jwts.claims()
-            .add("authorities", roles)
+            .add("authorities", new ObjectMapper().writeValueAsString(roles))
             .add("username", username)
         .build();
 
@@ -82,13 +84,26 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             .compact();
 
         response.addHeader(TokenJwtConfig.HEADER_AUTHORIZATION, TokenJwtConfig.PREFIX_TOKEN + token);
-        Map<String, String> body = new HashMap<>();
+        Map<String, Object> body = new HashMap<>();
         body.put("token", token);
         body.put("username", username);
+        body.put("isUser", false);
+        body.put("isBussiness", false);
+        body.put("isAdmin", false);
+
+        for (GrantedAuthority role : roles) {
+            if (role.getAuthority().equals(ConstantsRoles.ROLE_USER)) {
+                body.put("isUser", true);
+            } else if (role.getAuthority().equals(ConstantsRoles.ROLE_BUSSINESS)) {
+                body.put("isBussiness", true);
+            } else if (role.getAuthority().equals(ConstantsRoles.ROLE_ADMIN)) {
+                body.put("isAdmin", true);
+            }
+        }
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setContentType(TokenJwtConfig.CONTENT_TYPE_JSON);
-        response.setStatus(200);
+        response.setStatus(HttpStatus.OK.value());
     }
 
     @Override
@@ -100,7 +115,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         body.put("error", failed.getMessage());
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
-        response.setStatus(401);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(TokenJwtConfig.CONTENT_TYPE_JSON);
     }
     
