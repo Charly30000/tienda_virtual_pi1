@@ -17,7 +17,6 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 300)
     @NotBlank
     @Size(min = 3, max = 300)
-    // @Email
+    @Email
     private String email;
 
     @Column(name = "password", nullable = false, length = 60)
