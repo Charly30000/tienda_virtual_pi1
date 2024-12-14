@@ -1,6 +1,8 @@
 package com.tienda.virtual.backtiendavirtual.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -15,39 +17,33 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name="roles")
-public class Role {
+@Table(name = "categories")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true, name = "name")
-    @Size(min = 8, max = 50)
+    @Size(max = 100)
     @NotBlank
     @NotEmpty
     @NotNull
     private String name;
 
-    @JsonIgnoreProperties({"roles", "handler", "hibernateLazyInitializer"})
-    @JsonIgnore
-    @ManyToMany(mappedBy = "roles")
-    private List<User> users;
+    @ManyToMany(mappedBy = "categories")
+    @JsonIgnoreProperties({"categories", "handler", "hibernateLazyInitializer"})
+    private List<Product> products;
 
-    // Constructors
-    public Role() {
-        this.users = new ArrayList<>();
+    public Category() {
+        this.products = new ArrayList<>();
     }
 
-    public Role(String name) {
+    public Category(String name) {
         this.name = name;
-        this.users = new ArrayList<>();
+        this.products = new ArrayList<>();
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -64,12 +60,12 @@ public class Role {
         this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     @Override
@@ -89,7 +85,7 @@ public class Role {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Role other = (Role) obj;
+        Category other = (Category) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

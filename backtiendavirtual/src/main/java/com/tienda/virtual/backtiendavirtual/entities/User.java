@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tienda.virtual.backtiendavirtual.constants.ConstantsRoles;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -67,10 +69,18 @@ public class User {
     )
     private List<Role> roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"user", "handler", "hibernateLazyInitializer"})
+    private List<ShoppingCart> shoppingCarts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"user", "handler", "hibernateLazyInitializer"})
+    private List<Product> products;
+
     public User() {
-        if (this.roles == null) {
-            roles = new ArrayList<>();
-        }
+        this.roles = new ArrayList<>();
+        this.shoppingCarts = new ArrayList<>();
+        this.products = new ArrayList<>();
     }
 
     public User(@NotBlank @Size(min = 3, max = 50) String username, @NotBlank @Size(min = 3, max = 300) String email,
@@ -79,13 +89,11 @@ public class User {
         this.email = email;
         this.password = password;
         this.enabled = enabled;
-        this.roles = roles;
-        if (this.roles == null) {
-            roles = new ArrayList<>();
-        }
+        setRoles(roles);
+        this.shoppingCarts = new ArrayList<>();
+        this.products = new ArrayList<>();
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -132,6 +140,10 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+        boolean hasRoleAdmin = roles.stream().anyMatch(role -> ConstantsRoles.ROLE_ADMIN.equals(role.getName()));
+        boolean hasRoleBussiness = roles.stream().anyMatch(role -> ConstantsRoles.ROLE_BUSSINESS.equals(role.getName()));
+        setIsAdmin(hasRoleAdmin);
+        setIsBussiness(hasRoleBussiness);
     }
 
     public Boolean getIsAdmin() {
@@ -148,6 +160,22 @@ public class User {
 
     public void setIsBussiness(Boolean isBussiness) {
         this.isBussiness = isBussiness;
+    }
+
+    public List<ShoppingCart> getShoppingCarts() {
+        return shoppingCarts;
+    }
+
+    public void setShoppingCarts(List<ShoppingCart> shoppingCarts) {
+        this.shoppingCarts = shoppingCarts;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     @PrePersist
@@ -191,19 +219,3 @@ public class User {
     }
 
 }
-
-
-
-
-
-
-
-
-
-// @JsonManagedReference
-// @OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL)
-// private Set<Product> products = new HashSet<>();
-
-// @JsonManagedReference
-// @OneToMany(mappedBy = "userOwner", cascade = CascadeType.ALL)
-// private Set<ShoppingCart> shoppingCarts = new HashSet<>();
