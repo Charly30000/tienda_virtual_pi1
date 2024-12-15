@@ -1,6 +1,20 @@
-INSERT INTO products (name, price, description) VALUES ('Test Name 1', 123, 'Test description 1');
-INSERT INTO products (name, price, description) VALUES ('Test Name 2', 456, 'Test description 2');
-INSERT INTO products (name, price, description) VALUES ('Test Name 3', 789, 'Test description 3');
-INSERT INTO products (name, price, description) VALUES ('Test Name 4', 987, 'Test description 4');
-INSERT INTO products (name, price, description) VALUES ('Test Name 5', 654, 'Test description 5');
-INSERT INTO products (name, price, description) VALUES ('Test Name 6', 321, 'Test description 6');
+-- Inyeccion de roles
+INSERT INTO roles (id, name) VALUES (1, 'ROLE_ADMIN');
+INSERT INTO roles (id, name) VALUES (2, 'ROLE_BUSSINESS');
+INSERT INTO roles (id, name) VALUES (3, 'ROLE_USER');
+
+-- Inyeccion de usuarios
+INSERT INTO users (id, username, password, email, enabled) VALUES (1, 'useruser', '$2a$10$cQFJ5txH69G7VyI5Xt53KOg5CrTKAygXcyux35Y3gL7P5is/ju84S', 'useruser@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (2, 'bussinessbussiness', '$2a$10$Ihwc5i0chA7M.a3Om2kZ7u5nOa4qV74Dq8F9xJOozio23Aw6haIGC', 'bussinessbussiness@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (3, 'adminadmin', '$2a$10$rIp2a6J.SFMJWgwCkrf2jOc32vqkGUI03uPt0tvqih2Y8UnpJilEy', 'adminadmin@email.com', true);
+
+-- Inyeccion de roles a los usuarios
+-- Role User:
+INSERT INTO users_roles (user_id, role_id) VALUES (1, 3);
+-- Role Bussiness:
+INSERT INTO users_roles (user_id, role_id) VALUES (2, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (2, 2);
+-- Role Admin:
+INSERT INTO users_roles (user_id, role_id) VALUES (3, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (3, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (3, 1);
