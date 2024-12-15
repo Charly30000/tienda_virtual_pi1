@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -49,7 +50,8 @@ public class Product {
     private String description;
 
     @Column(nullable = false, name = "is_blocked")
-    private boolean isBlocked;
+    @JsonProperty(namespace = "isBlocked", value = "isBlocked")
+    private boolean blocked;
 
     @Column(nullable = false, name = "image")
     private String image;
@@ -103,12 +105,14 @@ public class Product {
         this.shoppingCartProducts = new ArrayList<>();
     }
 
-    public Product(@NotBlank @NotEmpty @NotNull String name, @NotBlank @NotEmpty @NotNull String description,
-            boolean isBlocked, String image, @NotNull @DecimalMin(value = "0.0", inclusive = true) Double price,
-            @Min(1) @NotNull Integer quantity, Integer sold, User user, List<Category> categories, List<Label> labels) {
+    public Product(@Size(max = 250) @NotBlank @NotEmpty @NotNull String name,
+            @Size(max = 3000) @NotBlank @NotEmpty @NotNull String description, boolean blocked, String image,
+            @NotNull @DecimalMin(value = "0.0", inclusive = true) @DecimalMax("9000000000000.0") Double price,
+            @Min(1) @Max(2147483647) @NotNull Integer quantity, @Max(2147483647) Integer sold, User user,
+            List<Category> categories, List<Label> labels) {
         this.name = name;
         this.description = description;
-        this.isBlocked = isBlocked;
+        this.blocked = blocked;
         this.image = image;
         this.price = price;
         this.quantity = quantity;
@@ -116,6 +120,9 @@ public class Product {
         this.user = user;
         this.categories = categories;
         this.labels = labels;
+        this.categories = new ArrayList<>();
+        this.labels = new ArrayList<>();
+        this.shoppingCartProducts = new ArrayList<>();
     }
 
     @PrePersist
@@ -148,11 +155,11 @@ public class Product {
     }
 
     public boolean isBlocked() {
-        return isBlocked;
+        return blocked;
     }
 
-    public void setBlocked(boolean isBlocked) {
-        this.isBlocked = isBlocked;
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public String getImage() {
