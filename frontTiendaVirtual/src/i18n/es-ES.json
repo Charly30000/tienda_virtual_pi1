@@ -1,0 +1,10 @@
+{
+    "LoginPage": {
+        "title": "¡Bienvenid@!",
+        "username": "Nombre de usuario",
+        "password": "Contraseña",
+        "button.login": "Iniciar sesión",
+        "link.register": "Crear cuenta",
+        "not.registered": "¿No estás registrado?"
+    }
+}
