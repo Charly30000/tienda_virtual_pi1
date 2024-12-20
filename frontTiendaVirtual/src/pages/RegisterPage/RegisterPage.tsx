@@ -30,7 +30,7 @@ export const RegisterPage = () => {
     }
     if (data.password.trim().length === 0) {
       errors.password = t("RegisterPage", "error.password");
-    } else if (data.username.length < 8 || data.username.length > 60) {
+    } else if (data.password.length < 8 || data.password.length > 60) {
       errors.password = t("RegisterPage", "error.password.length");
     }
     if (data.repeatPassword !== data.password) {
@@ -65,8 +65,15 @@ export const RegisterPage = () => {
         await authService.register(requestData);
         setErrorAlert(null); // Limpia la alerta de error
         setSuccessfullAlert(true);
+        // Reiniciamos los valores para evitar que trate de recrear al mismo usuario
+        registerForm.setValues({
+          username: "",
+          email: "",
+          password: "",
+          repeatPassword: ""
+        });
         setTimeout(() => {
-          navigate("/login"); // Navega al login después del registro exitoso
+          handleLoginNavigation() // Navega al login después del registro exitoso
         }, 3000);
       } catch (error) {
         console.error(error);
