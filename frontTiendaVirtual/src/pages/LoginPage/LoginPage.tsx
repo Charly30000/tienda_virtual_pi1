@@ -16,24 +16,26 @@ export const LoginPage = () => {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const authService = new AuthService();
+
+  const validate = (data: LoginForm) => {
+    const errors: ErrorsForm = {};
+    if (data.username.trim().length === 0) {
+      errors.username = t("LoginPage", "error.username");
+    }
+    if (data.password.trim().length === 0) {
+      errors.password = t("LoginPage", "error.password");
+    }
+    return errors;
+  };
+
   const loginForm = useForm<LoginForm>(
     {
       username: "",
       password: "",
     },
-    (data) => {
-      const errors: ErrorsForm = {};
-      if (data.username.trim().length === 0) {
-        errors.username = t("LoginPage", "error.username");
-      }
-      if (data.password.trim().length === 0) {
-        errors.password = t("LoginPage", "error.password");
-      }
-      return errors;
-    }
+    validate
   );
-
-  const authService = new AuthService();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,6 +50,7 @@ export const LoginPage = () => {
         const data: LoginResponse = await authService.login(requestData);
         auth.createUserInstance(data);
         setErrorAlert(null);
+        navigate("/");
       } catch (error) {
         console.error(error);
         setErrorAlert(t("LoginPage", "error.invalidCredentials"));
@@ -60,6 +63,11 @@ export const LoginPage = () => {
   const handleRegisterNavigation = () => {
     navigate("/register");
   };
+
+  React.useEffect(() => {
+    // Forzamos a que el usuario haga logout cuando entra a esta pagina
+    auth.logout();
+  }, []);
 
   return (
     <div className="container mx-auto">
