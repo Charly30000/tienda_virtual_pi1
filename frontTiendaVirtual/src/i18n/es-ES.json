@@ -5,6 +5,9 @@
         "password": "Contraseña",
         "button.login": "Iniciar sesión",
         "link.register": "Crear cuenta",
-        "not.registered": "¿No estás registrado?"
+        "not.registered": "¿No estás registrado?",
+        "error.username": "El nombre de usuario es requerido",
+        "error.password": "La contraseña es requerida",
+        "error.invalidCredentials": "Credenciales inválidas"
     }
 }
