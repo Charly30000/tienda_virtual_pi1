@@ -1,9 +1,11 @@
 package com.tienda.virtual.backtiendavirtual.entities;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
@@ -26,6 +28,10 @@ public class ShoppingCart {
     @Column(nullable = false, name = "date")
     private Date date;
 
+    @Column(nullable = false, name = "is_active")
+    @JsonIgnore
+    private boolean isActive;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"shoppingCarts", "handler", "hibernateLazyInitializer"})
@@ -41,9 +47,10 @@ public class ShoppingCart {
         shoppingCartProducts = new ArrayList<>();
     }
 
-    public ShoppingCart(User user) {
+    public ShoppingCart(User user, boolean isActive) {
         this.date = new Date();
         this.user = user;
+        this.isActive = isActive;
         this.shoppingCartProducts = new ArrayList<>();
     }
 
@@ -77,6 +84,20 @@ public class ShoppingCart {
 
     public void setShoppingCartProducts(List<ShoppingCartProduct> shoppingCartProducts) {
         this.shoppingCartProducts = shoppingCartProducts;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getFormatDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String formattedDate = formatter.format(date);
+        return formattedDate;
     }
 
     @Override
