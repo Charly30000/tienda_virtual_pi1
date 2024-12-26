@@ -1,6 +1,7 @@
 package com.tienda.virtual.backtiendavirtual.services;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +22,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private ShoppingCartRepository shoppingCartRepository;
 
     /**
-     * Metodo para buscar la ShoppingCart del usuario
+     * Metodo para buscar la ShoppingCart del usuario, en caso de no tenerla, la crea
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Optional<ShoppingCart> findActiveCartByUser(User user) {
         Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByIsActiveTrueAndUser(user);
 
@@ -91,7 +92,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         
     }
 
+    /**
+     * Metodo para actualizar la cantidad de un producto que quiere un usuario
+     * En caso de no existir la ShoppingCart, la crea
+     * En caso de no tener el producto anteriormente, lo añade con la cantidad deseada
+     */
     @Override
+    @Transactional
     public Optional<ShoppingCart> updateProductToShoppingCart(User user, Product product, Integer quantity) {
         Optional<ShoppingCart> shoppingCartOptional = findActiveCartByUser(user);
 
@@ -112,6 +119,30 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         // por ello no hacemos el shoppingCart.setShoppingCartProducts(productsShoppingCart);
         
         return Optional.of(shoppingCartRepository.save(shoppingCart));
+    }
+
+    /**
+     * Eliminacion de un producto de la ShoppingCart del usuario
+     * En caso de que no tenga el producto, devolvemos la ShoppingCart sin cambios
+     */
+    @Override
+    @Transactional
+    public Optional<ShoppingCart> deleteProductToShoppingCart(User user, Product product) {
+        Optional<ShoppingCart> shoppingCartOptional = findActiveCartByUser(user);
+        ShoppingCart shoppingCart = shoppingCartOptional.orElseThrow();
+        List<ShoppingCartProduct> productsShoppingCart = shoppingCart.getShoppingCartProducts();
+        Iterator<ShoppingCartProduct> iterator = productsShoppingCart.iterator();
+
+        // Realizamos el proceso de eliminacion del producto unicamente si encontramos el producto
+        while (iterator.hasNext()) {
+            ShoppingCartProduct shoppingCartProduct = iterator.next();
+            if (shoppingCartProduct.getProduct().equals(product)) {
+                iterator.remove();
+                return Optional.of(shoppingCartRepository.save(shoppingCart));
+            }
+        }
+
+        return shoppingCartOptional;
     }
 
 }

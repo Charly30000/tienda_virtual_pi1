@@ -17,4 +17,6 @@ public interface ShoppingCartService {
     Optional<ShoppingCart> addProductToShoppingCart(User user, Product product);
     // Metodo para añadir y/o actualizar un [nuevo] producto de la ShoppingCart
     Optional<ShoppingCart> updateProductToShoppingCart(User user, Product product, Integer quantity);
+    // Metodo para eliminar un producto de la ShoppingCart
+    Optional<ShoppingCart> deleteProductToShoppingCart(User user, Product product);
 }
