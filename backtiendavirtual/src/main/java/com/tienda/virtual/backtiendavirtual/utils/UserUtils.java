@@ -40,19 +40,4 @@ public class UserUtils {
         return user.get();
     }
 
-    public ResponseEntity<Map<String, Object>> getUserNotFoundMessage() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Usuario no encontrado");
-        response.put("error", true);
-        response.put("status", HttpStatus.NOT_FOUND.value());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-    }
-
-    public ResponseEntity<Map<String, Object>> getUserBlockedMessage() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Usuario bloqueado");
-        response.put("error", true);
-        response.put("status", HttpStatus.UNAUTHORIZED.value());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
 }

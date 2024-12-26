@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tienda.virtual.backtiendavirtual.constants.ConstantsRoles;
@@ -26,6 +28,7 @@ import com.tienda.virtual.backtiendavirtual.exceptions.UserBlockedException;
 import com.tienda.virtual.backtiendavirtual.exceptions.UserNotFoundException;
 import com.tienda.virtual.backtiendavirtual.services.ProductService;
 import com.tienda.virtual.backtiendavirtual.services.ShoppingCartService;
+import com.tienda.virtual.backtiendavirtual.utils.ExceptionResponseMessagesUtils;
 import com.tienda.virtual.backtiendavirtual.utils.UserUtils;
 
 @RestController
@@ -66,7 +69,7 @@ public class ShoppingCartController {
                 productResult.put("name", shoppingCartProduct.getProduct().getName());
                 productResult.put("image", shoppingCartProduct.getProduct().getImage());
                 productResult.put("price", shoppingCartProduct.getProduct().getPrice());
-                productResult.put("total_available", shoppingCartProduct.getProduct().getQuantity());
+                productResult.put("total_available", shoppingCartProduct.getProduct().getQuantity() - shoppingCartProduct.getProduct().getSold());
                 productResult.put("quantity", shoppingCartProduct.getQuantity());
                 productResult.put("sold", shoppingCartProduct.getProduct().getSold());
                 products.add(productResult);
@@ -77,10 +80,16 @@ public class ShoppingCartController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (UserBlockedException e) {
             e.printStackTrace();
-            return userUtils.getUserBlockedMessage();
+            return ExceptionResponseMessagesUtils.userBlocked();
         } catch (UserNotFoundException e) {
             e.printStackTrace();
-            return userUtils.getUserNotFoundMessage();
+            return ExceptionResponseMessagesUtils.userNotFound();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
         }
     }
     
@@ -92,10 +101,16 @@ public class ShoppingCartController {
             return null;
         } catch (UserBlockedException e) {
             e.printStackTrace();
-            return userUtils.getUserBlockedMessage();
+            return ExceptionResponseMessagesUtils.userBlocked();
         } catch (UserNotFoundException e) {
             e.printStackTrace();
-            return userUtils.getUserNotFoundMessage();
+            return ExceptionResponseMessagesUtils.userNotFound();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
         }
     }
 
@@ -113,8 +128,17 @@ public class ShoppingCartController {
                 response.put("status", HttpStatus.NOT_FOUND.value());
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-            
-            if (product.get().getSold() >= product.get().getQuantity()) {
+
+            if (product.get().isBlocked()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "El producto no puede ser seleccionado");
+                response.put("error", true);
+                response.put("status", HttpStatus.LOCKED.value());
+                return ResponseEntity.status(HttpStatus.LOCKED).body(response);
+            }
+            final Integer QUANTITY_TO_ADD = 1;
+            Integer totalAvailable = product.get().getQuantity() - product.get().getSold();
+            if (totalAvailable - QUANTITY_TO_ADD < 0) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("message", "No hay disponibilidad suficiente de este producto");
                 response.put("error", true);
@@ -124,23 +148,32 @@ public class ShoppingCartController {
 
             Optional<ShoppingCart> shoppingCart = shoppingCartService.findActiveCartByUser(user);
             if (shoppingCart.isEmpty()) {
-                ShoppingCart bbddNewShoppingCart = shoppingCartService.createShoppingCart(user);
-
+                Optional<ShoppingCart> bbddNewShoppingCart = shoppingCartService.createShoppingCart(user);
+                if (bbddNewShoppingCart.isEmpty()) {
+                    throw new Error("No se ha podido crear la shoppingCart");
+                }
                 Map<String, Object> response = new HashMap<>();
-                response.put("date", bbddNewShoppingCart.getFormatDate());
-                response.put("products", bbddNewShoppingCart.getShoppingCartProducts());
+                response.put("date", bbddNewShoppingCart.get().getFormatDate());
+                response.put("products", bbddNewShoppingCart.get().getShoppingCartProducts());
 
             }
 
-            shoppingCartService.addNewProductToShoppingCart(user, product.get());
+            shoppingCartService.addProductToShoppingCart(user, product.get())
+                .orElseThrow();
 
             return ResponseEntity.ok().build();
         } catch (UserBlockedException e) {
             e.printStackTrace();
-            return userUtils.getUserBlockedMessage();
+            return ExceptionResponseMessagesUtils.userBlocked();
         } catch (UserNotFoundException e) {
             e.printStackTrace();
-            return userUtils.getUserNotFoundMessage();
+            return ExceptionResponseMessagesUtils.userNotFound();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
         }
     }
 
@@ -152,25 +185,74 @@ public class ShoppingCartController {
             return null;
         } catch (UserBlockedException e) {
             e.printStackTrace();
-            return userUtils.getUserBlockedMessage();
+            return ExceptionResponseMessagesUtils.userBlocked();
         } catch (UserNotFoundException e) {
             e.printStackTrace();
-            return userUtils.getUserNotFoundMessage();
+            return ExceptionResponseMessagesUtils.userNotFound();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
         }
     }
 
     @PutMapping("/updateProduct/{id}")
     @Secured(ConstantsRoles.ROLE_USER)
-    public ResponseEntity<?> updateQuantityProduct() {
+    public ResponseEntity<?> updateQuantityProduct(@PathVariable Long id, @RequestParam Integer quantity) {
         try {
             User user = userUtils.getUserAuthenticated();
-            return null;
+
+            Optional<Product> productOptional = productService.findById(id);
+            if (productOptional.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Producto no encontrado");
+                response.put("error", true);
+                response.put("status", HttpStatus.NOT_FOUND.value());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            Product product = productOptional.get();
+            if (product.isBlocked()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "El producto no puede ser seleccionado");
+                response.put("error", true);
+                response.put("status", HttpStatus.LOCKED.value());
+                return ResponseEntity.status(HttpStatus.LOCKED).body(response);
+            }
+            Integer totalAvailable = product.getQuantity() - product.getSold();
+            if (totalAvailable - quantity < 0) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "No hay disponibilidad suficiente de este producto");
+                response.put("error", true);
+                response.put("status", HttpStatus.NOT_ACCEPTABLE.value());
+                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
+            }
+
+            Optional<ShoppingCart> shoppingCartOptional = shoppingCartService.findActiveCartByUser(user);
+            if (shoppingCartOptional.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "ShoppingCart no encontrada");
+                response.put("error", true);
+                response.put("status", HttpStatus.NOT_FOUND.value());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
+            shoppingCartService.updateProductToShoppingCart(user, product, quantity).orElseThrow();
+
+            return ResponseEntity.ok().build();
         } catch (UserBlockedException e) {
             e.printStackTrace();
-            return userUtils.getUserBlockedMessage();
+            return ExceptionResponseMessagesUtils.userBlocked();
         } catch (UserNotFoundException e) {
             e.printStackTrace();
-            return userUtils.getUserNotFoundMessage();
+            return ExceptionResponseMessagesUtils.userNotFound();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ExceptionResponseMessagesUtils.serverError();
         }
     }
 

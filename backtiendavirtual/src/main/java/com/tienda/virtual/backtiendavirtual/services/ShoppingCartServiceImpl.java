@@ -29,7 +29,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findByIsActiveTrueAndUser(user);
 
         if (shoppingCart.isEmpty()) {
-            ShoppingCart bbddNewShoppingCart = createShoppingCart(user);
+            ShoppingCart bbddNewShoppingCart = createShoppingCart(user).orElseThrow();
             return Optional.of(bbddNewShoppingCart);
         }
 
@@ -41,16 +41,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      */
     @Override
     @Transactional
-    public ShoppingCart createShoppingCart(User user) {
-        return shoppingCartRepository.save(new ShoppingCart(user, true));
+    public Optional<ShoppingCart> createShoppingCart(User user) {
+        return Optional.of(shoppingCartRepository.save(new ShoppingCart(user, true)));
     }
 
     /**
      * Metodo para crear una nueva ShoppingCart y hacer que la anterior quede desactivada
+     * este método realiza varias operaciones en la bbdd, la etiqueta @Transactional asegura la transaccion
      */
     @Override
     @Transactional
-    public ShoppingCart createCartAndDeactivatePreviousCart(User user) {
+    public Optional<ShoppingCart> createCartAndDeactivatePreviousCart(User user) {
         Optional<ShoppingCart> lastShoppingCartOptional = shoppingCartRepository.findByIsActiveTrueAndUser(user);
 
         if (lastShoppingCartOptional.isPresent()) {
@@ -68,7 +69,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      */
     @Override
     @Transactional
-    public ShoppingCart addNewProductToShoppingCart(User user, Product product) {
+    public Optional<ShoppingCart> addProductToShoppingCart(User user, Product product) {
+        Integer QUANTITY_TO_ADD = 1;
         Optional<ShoppingCart> shoppingCartOptional = findActiveCartByUser(user);
 
         ShoppingCart shoppingCart = shoppingCartOptional.orElseThrow();
@@ -77,16 +79,39 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         // Identifico si el producto ya existe, si es asi, no lo vuelvo a añadir
         for (ShoppingCartProduct products : productsShoppingCart) {
             if (products.getProduct().equals(product)) {
-                return shoppingCart;
+                return shoppingCartOptional;
             }
         }
-
-        productsShoppingCart.add(new ShoppingCartProduct(shoppingCart, product, 1));
+        // En caso de no encontrar el producto, lo añade
+        productsShoppingCart.add(new ShoppingCartProduct(shoppingCart, product, QUANTITY_TO_ADD));
         // productsShoppingCart apunta al mismo lugar en memoria que shoppingCart.getShoppingCartProducts(),
         // por ello no hacemos el shoppingCart.setShoppingCartProducts(productsShoppingCart);
         
-        return shoppingCartRepository.save(shoppingCart);
+        return Optional.of(shoppingCartRepository.save(shoppingCart));
         
+    }
+
+    @Override
+    public Optional<ShoppingCart> updateProductToShoppingCart(User user, Product product, Integer quantity) {
+        Optional<ShoppingCart> shoppingCartOptional = findActiveCartByUser(user);
+
+        ShoppingCart shoppingCart = shoppingCartOptional.orElseThrow();
+        List<ShoppingCartProduct> productsShoppingCart = shoppingCart.getShoppingCartProducts();
+
+        // Identifico si el producto ya existe, si es asi, 
+        // no lo vuelvo a añadir y solo cambio la cantidad que el usuario quiere
+        for (ShoppingCartProduct products : productsShoppingCart) {
+            if (products.getProduct().equals(product)) {
+                products.setQuantity(quantity);
+                return Optional.of(shoppingCartRepository.save(shoppingCart));
+            }
+        }
+        // En caso de no encontrar el producto, lo añade con la cantidad deseada
+        productsShoppingCart.add(new ShoppingCartProduct(shoppingCart, product, quantity));
+        // productsShoppingCart apunta al mismo lugar en memoria que shoppingCart.getShoppingCartProducts(),
+        // por ello no hacemos el shoppingCart.setShoppingCartProducts(productsShoppingCart);
+        
+        return Optional.of(shoppingCartRepository.save(shoppingCart));
     }
 
 }
