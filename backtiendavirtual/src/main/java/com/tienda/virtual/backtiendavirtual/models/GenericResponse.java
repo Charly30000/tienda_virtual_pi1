@@ -51,8 +51,8 @@ public class GenericResponse {
     }
 
     @JsonProperty("status")
-    public void setStatus(int status) {
-        this.status = status;
+    public void setStatus(HttpStatus status) {
+        this.status = status.value();
     }
 
     @JsonProperty("error")

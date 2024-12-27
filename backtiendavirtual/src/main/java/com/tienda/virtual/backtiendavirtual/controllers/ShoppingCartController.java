@@ -24,6 +24,7 @@ import com.tienda.virtual.backtiendavirtual.entities.ShoppingCartProduct;
 import com.tienda.virtual.backtiendavirtual.entities.User;
 import com.tienda.virtual.backtiendavirtual.exceptions.UserBlockedException;
 import com.tienda.virtual.backtiendavirtual.exceptions.UserNotFoundException;
+import com.tienda.virtual.backtiendavirtual.models.ShoppingCartInvalidBuyResponse;
 import com.tienda.virtual.backtiendavirtual.models.ShoppingCartResponse;
 import com.tienda.virtual.backtiendavirtual.services.ProductService;
 import com.tienda.virtual.backtiendavirtual.services.ShoppingCartService;
@@ -48,23 +49,26 @@ public class ShoppingCartController {
     public ResponseEntity<?> getShoppingCart() {
         try {
             User user = userUtils.getUserAuthenticated();
-            Optional<ShoppingCart> shoppingCart = shoppingCartService.findActiveCartByUser(user);
-            if (shoppingCart.isEmpty()) {
+            Optional<ShoppingCart> shoppingCartOptional = shoppingCartService.findActiveCartByUser(user);
+            if (shoppingCartOptional.isEmpty()) {
                 return ResponseMessagesUtils.notFound("ShoppingCart no encontrada");
             }
-
-            List<ShoppingCartProduct> shoppingCartProducts = shoppingCart.get().getShoppingCartProducts();
+            ShoppingCart shoppingCart = shoppingCartOptional.orElseThrow();
+            List<ShoppingCartProduct> shoppingCartProducts = shoppingCart.getShoppingCartProducts();
             List<ShoppingCartResponse.Product> products = new ArrayList<>();
-            ShoppingCartResponse response = new ShoppingCartResponse(shoppingCart.get().getFormatDate(), products);
+            ShoppingCartResponse response = new ShoppingCartResponse(shoppingCart.getFormatDate(), products);
             for (ShoppingCartProduct shoppingCartProduct : shoppingCartProducts) {
+                Product productSC = shoppingCartProduct.getProduct();
+                System.out.println(productSC.toString());
                 ShoppingCartResponse.Product product = new ShoppingCartResponse.Product(
-                        shoppingCartProduct.getProduct().getId(),
-                        shoppingCartProduct.getProduct().getName(),
-                        shoppingCartProduct.getProduct().getImage(),
-                        shoppingCartProduct.getProduct().getPrice(),
+                        productSC.getId(),
+                        productSC.getName(),
+                        productSC.getImage(),
+                        productSC.getPrice(),
                         shoppingCartProduct.getQuantity(),
-                        shoppingCartProduct.getProduct().getSold(),
-                        shoppingCartProduct.getProduct().getQuantity() - shoppingCartProduct.getProduct().getSold());
+                        productSC.getSold(),
+                        productSC.getQuantity() - productSC.getSold(),
+                        productSC.isBlocked());
                 products.add(product);
             }
 
@@ -89,7 +93,53 @@ public class ShoppingCartController {
     public ResponseEntity<?> buyShoppingCart() {
         try {
             User user = userUtils.getUserAuthenticated();
-            return null;
+
+            Optional<ShoppingCart> actualShoppingCartOptional = shoppingCartService.findActiveCartByUser(user);
+
+            if (actualShoppingCartOptional.isEmpty()) {
+                return ResponseMessagesUtils.serverError("No se ha encontrado ninguna cesta de la compra");
+            }
+
+            ShoppingCart shoppingCart = actualShoppingCartOptional.get();
+
+            List<ShoppingCartProduct> shoppingCartProducts = shoppingCart.getShoppingCartProducts();
+            if (shoppingCartProducts.isEmpty()) {
+                return ResponseMessagesUtils.notAcceptable("No hay ningun producto seleccionado");
+            }
+
+            // Almacenamos en una lista los productos que no puedan ser comprados
+            List<ShoppingCartInvalidBuyResponse.InvalidProducts> lockedProducts = new ArrayList<>();
+            for (ShoppingCartProduct shoppingCartProduct : shoppingCartProducts) {
+                Integer totalAvailable = shoppingCartProduct.getProduct().getQuantity()
+                        - shoppingCartProduct.getProduct().getSold();
+                if (totalAvailable - shoppingCartProduct.getQuantity() < 0
+                        || shoppingCartProduct.getProduct().isBlocked()) {
+                    ShoppingCartInvalidBuyResponse.InvalidProducts productLocked = new ShoppingCartInvalidBuyResponse.InvalidProducts(
+                            shoppingCartProduct.getProduct().getId(),
+                            shoppingCartProduct.getProduct().getName(),
+                            shoppingCartProduct.getProduct().getUser().getUsername(),
+                            shoppingCartProduct.getProduct().isBlocked(),
+                            totalAvailable,
+                            shoppingCartProduct.getQuantity());
+                    lockedProducts.add(productLocked);
+                }
+            }
+            // Comprobamos si hay productos que no se puedan comprar
+            if (!lockedProducts.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new ShoppingCartInvalidBuyResponse(
+                                "Algunos productos que intentas seleccionar están fuera de stock o no hay suficientes",
+                                HttpStatus.CONFLICT,
+                                true, lockedProducts));
+            }
+
+            Optional<ShoppingCart> shoppingCartOptional = shoppingCartService.createCartAndDeactivatePreviousCart(user);
+            if (shoppingCartOptional.isEmpty()) {
+                return ResponseMessagesUtils.serverError(
+                        "No ha podido realizarse el proceso de compra, vuelve a intentarlo más tarde por favor");
+            }
+
+            return ResponseMessagesUtils.ok("Compra realizada correctamente");
         } catch (UserBlockedException e) {
             e.printStackTrace();
             return ResponseMessagesUtils.userBlocked();
@@ -180,7 +230,12 @@ public class ShoppingCartController {
 
     @PutMapping("/updateProduct/{id}")
     @Secured(ConstantsRoles.ROLE_USER)
-    public ResponseEntity<?> updateQuantityProduct(@PathVariable Long id, @RequestParam Integer quantity) {
+    public ResponseEntity<?> updateQuantityProduct(@PathVariable Long id,
+            @RequestParam(required = false) Integer quantity) {
+        if (quantity == null || quantity < 1) {
+            return ResponseMessagesUtils
+                    .badRequest("El campo 'quantity' es obligatorio y ser mayor o igual a 1");
+        }
         try {
             User user = userUtils.getUserAuthenticated();
 

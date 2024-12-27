@@ -22,7 +22,7 @@ INSERT INTO users_roles (user_id, role_id) VALUES (3, 1);
 -- Inyeccion de productos de prueba
 INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (1, 'Nintendo Switch', 'Consola de videojuegos híbrida', '', 999, 1000, 299.99, false, 2);
 INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (2, 'PlayStation 5', 'Consola de videojuegos de última generación', '', 391, 500, 499.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (3, 'Xbox Series X', 'Consola de videojuegos de alta gama', '', 14, 600, 499.99, false, 2);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (3, 'Xbox Series X', 'Consola de videojuegos de alta gama', '', 14, 600, 499.99, true, 2);
 INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (4, 'Raspberry Pi 4', 'Mini computadora versátil', '', 3000, 3000, 35.99, false, 2);
 INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (5, 'Arduino Uno', 'Placa de desarrollo electrónica', '', 780, 5000, 22.99, false, 2);
 INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (6, 'iPhone 14', 'Smartphone de alta gama', '', 92, 100, 999.99, false, 2);

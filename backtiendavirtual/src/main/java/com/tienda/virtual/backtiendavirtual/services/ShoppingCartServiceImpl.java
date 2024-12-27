@@ -1,5 +1,6 @@
 package com.tienda.virtual.backtiendavirtual.services;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,7 @@ import com.tienda.virtual.backtiendavirtual.entities.Product;
 import com.tienda.virtual.backtiendavirtual.entities.ShoppingCart;
 import com.tienda.virtual.backtiendavirtual.entities.ShoppingCartProduct;
 import com.tienda.virtual.backtiendavirtual.entities.User;
+import com.tienda.virtual.backtiendavirtual.repositories.ProductRepository;
 import com.tienda.virtual.backtiendavirtual.repositories.ShoppingCartRepository;
 
 @Service
@@ -20,6 +22,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     /**
      * Metodo para buscar la ShoppingCart del usuario, en caso de no tenerla, la crea
@@ -48,6 +53,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     /**
      * Metodo para crear una nueva ShoppingCart y hacer que la anterior quede desactivada
+     * Actualiza la cantidad de productos disponibles en base a la compra
      * este método realiza varias operaciones en la bbdd, la etiqueta @Transactional asegura la transaccion
      */
     @Override
@@ -55,13 +61,32 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public Optional<ShoppingCart> createCartAndDeactivatePreviousCart(User user) {
         Optional<ShoppingCart> lastShoppingCartOptional = shoppingCartRepository.findByIsActiveTrueAndUser(user);
 
-        if (lastShoppingCartOptional.isPresent()) {
-            ShoppingCart lastShoppingCart = lastShoppingCartOptional.orElseThrow();
-            lastShoppingCart.setActive(false);
-            lastShoppingCart.setDate(new Date());
-            shoppingCartRepository.save(lastShoppingCart);
+        // Actualiza el carrito de la compra del usuario
+        ShoppingCart lastShoppingCart = lastShoppingCartOptional.orElseThrow();
+        lastShoppingCart.setActive(false);
+        lastShoppingCart.setDate(new Date());
+        shoppingCartRepository.save(lastShoppingCart);
+
+        List<ShoppingCartProduct> shoppingCartProducts = lastShoppingCart.getShoppingCartProducts();
+        if (shoppingCartProducts.isEmpty()) {
+            throw new IllegalArgumentException("No hay elementos en la cesta, no se procederá con la compra");
         }
 
+        // Actualiza el valor de los productos
+        List<Product> products = new ArrayList<>();
+        for (ShoppingCartProduct shoppingCartProduct : shoppingCartProducts) {
+            Product product = shoppingCartProduct.getProduct();
+            Integer totalAvailable = product.getQuantity() - product.getSold();
+            if (totalAvailable - shoppingCartProduct.getQuantity() < 0) {
+                throw new IllegalArgumentException("La cantidad solicitada del producto sobrepasa a la cantidad disponible");
+            }
+            if (product.isBlocked()) {
+                throw new IllegalArgumentException("El producto seleccionado se encuentra bloqueado");
+            }
+            product.setSold(product.getSold() + shoppingCartProduct.getQuantity());
+            products.add(product);
+        }
+        productRepository.saveAll(products);
         return createShoppingCart(user);
     }
 

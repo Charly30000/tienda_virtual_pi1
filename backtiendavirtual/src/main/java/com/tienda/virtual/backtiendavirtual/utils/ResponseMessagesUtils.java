@@ -31,6 +31,14 @@ public class ResponseMessagesUtils {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
+    public static final ResponseEntity<GenericResponse> serverError(String message) {
+        GenericResponse response = new GenericResponse(
+                message,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                true);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
     public static final ResponseEntity<GenericResponse> ok(String message) {
         GenericResponse response = new GenericResponse(
                 message,
@@ -61,5 +69,13 @@ public class ResponseMessagesUtils {
                 HttpStatus.NOT_ACCEPTABLE,
                 true);
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(response);
+    }
+
+    public static final ResponseEntity<GenericResponse> badRequest(String message) {
+        GenericResponse response = new GenericResponse(
+                message,
+                HttpStatus.BAD_REQUEST,
+                true);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
