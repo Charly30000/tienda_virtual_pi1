@@ -59,7 +59,6 @@ public class ShoppingCartController {
             ShoppingCartResponse response = new ShoppingCartResponse(shoppingCart.getFormatDate(), products);
             for (ShoppingCartProduct shoppingCartProduct : shoppingCartProducts) {
                 Product productSC = shoppingCartProduct.getProduct();
-                System.out.println(productSC.toString());
                 ShoppingCartResponse.Product product = new ShoppingCartResponse.Product(
                         productSC.getId(),
                         productSC.getName(),
