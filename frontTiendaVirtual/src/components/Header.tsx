@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import ShoppingBasket from "@mui/icons-material/ShoppingBasket";
-import { Input } from "@mui/material";
+import Navbar from "./Navbar";
 import { Link } from "react-router-dom";
 
 interface HeaderProps {
@@ -9,31 +9,59 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
+  const [products] = useState([
+    { id: 1, name: "Apple" },
+    { id: 2, name: "Banana" },
+    { id: 3, name: "Orange" },
+    { id: 4, name: "Grapes" },
+  ]);
+
+  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchResults = (results: { id: number; name: string }[], query: string) => {
+    setFilteredProducts(results);
+    setSearchQuery(query);
+  };
+
   return (
-    <div className=" w-full bg-blue-950 px-5 py-2 flex justify-between items-center ">
-      <HomeIcon
-        sx={{ color: "white" }}
-        fontSize="large"
-        className="cursor-pointer"
-        onClick={toggleSidebar}
-      />
-
-      <Link to="/" className="uppercase text-white px-3">
-        Logo
-      </Link>
-
-      <Input
-        placeholder="Search products..."
-        className="w-full bg-white mr-3 px-2 py-1 rounded-md border-none"
-      />
-
-      <Link to="/cart">
-        <ShoppingBasket
+    <div className="w-full bg-blue-950 px-5 py-2 flex flex-col">
+      <div className="flex justify-between items-center">
+        <HomeIcon
           sx={{ color: "white" }}
           fontSize="large"
           className="cursor-pointer"
+          onClick={toggleSidebar}
         />
-      </Link>
+
+        <Link to="/" className="uppercase text-white px-3">
+          Logo
+        </Link>
+
+        <Navbar products={products} onSearch={handleSearchResults} />
+
+        <Link to="/cart">
+          <ShoppingBasket
+            sx={{ color: "white" }}
+            fontSize="large"
+            className="cursor-pointer"
+          />
+        </Link>
+      </div>
+
+      {searchQuery && (
+        <div className="bg-white p-4 rounded-md mt-4 shadow-lg max-h-[300px] overflow-y-auto">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <div key={product.id} className="py-2">
+                {product.name}
+              </div>
+            ))
+          ) : (
+            <p>No products found</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
