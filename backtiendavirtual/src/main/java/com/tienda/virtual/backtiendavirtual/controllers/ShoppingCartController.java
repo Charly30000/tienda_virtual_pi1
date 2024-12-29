@@ -274,4 +274,46 @@ public class ShoppingCartController {
         }
     }
 
+    @GetMapping("/historic")
+    @Secured(ConstantsRoles.ROLE_USER)
+    public ResponseEntity<?> getHistoricalShoppingCart() {
+        try {
+            User user = userUtils.getUserAuthenticated();
+            Optional<ShoppingCart> shoppingCartOptional = shoppingCartService.findActiveCartByUser(user);
+            if (shoppingCartOptional.isEmpty()) {
+                return ResponseMessagesUtils.notFound("ShoppingCart no encontrada");
+            }
+            ShoppingCart shoppingCart = shoppingCartOptional.orElseThrow();
+            List<ShoppingCartProduct> shoppingCartProducts = shoppingCart.getShoppingCartProducts();
+            List<ShoppingCartResponse.Product> products = new ArrayList<>();
+            ShoppingCartResponse response = new ShoppingCartResponse(shoppingCart.getFormatDate(), products);
+            for (ShoppingCartProduct shoppingCartProduct : shoppingCartProducts) {
+                Product productSC = shoppingCartProduct.getProduct();
+                ShoppingCartResponse.Product product = new ShoppingCartResponse.Product(
+                        productSC.getId(),
+                        productSC.getName(),
+                        productSC.getImage(),
+                        productSC.getPrice(),
+                        shoppingCartProduct.getQuantity(),
+                        productSC.getSold(),
+                        productSC.getQuantity() - productSC.getSold(),
+                        productSC.isBlocked());
+                products.add(product);
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (UserBlockedException e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.userBlocked();
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.userNotFound();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.serverError();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.serverError();
+        }
+    }
 }
