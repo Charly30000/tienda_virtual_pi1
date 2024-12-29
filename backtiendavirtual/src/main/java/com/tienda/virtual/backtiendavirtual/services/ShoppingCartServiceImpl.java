@@ -170,4 +170,10 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartOptional;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ShoppingCart> findShoppingCartsByUserOrderByDateDesc(User user) {
+        return shoppingCartRepository.findByUserOrderByDateDesc(user);
+    }
+
 }

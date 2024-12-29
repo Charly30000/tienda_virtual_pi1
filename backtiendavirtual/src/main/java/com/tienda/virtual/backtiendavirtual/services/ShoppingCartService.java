@@ -1,5 +1,6 @@
 package com.tienda.virtual.backtiendavirtual.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.tienda.virtual.backtiendavirtual.entities.Product;
@@ -19,4 +20,6 @@ public interface ShoppingCartService {
     Optional<ShoppingCart> updateProductToShoppingCart(User user, Product product, Integer quantity);
     // Metodo para eliminar un producto de la ShoppingCart
     Optional<ShoppingCart> deleteProductToShoppingCart(User user, Product product);
+    // Metodo para buscar todas las ShoppingCart de un usuario
+    List<ShoppingCart> findShoppingCartsByUserOrderByDateDesc(User user);
 }

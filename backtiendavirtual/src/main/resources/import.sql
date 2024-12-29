@@ -63,6 +63,20 @@ INSERT INTO shopping_cart (id, is_active, date, user_id) VALUES (3, false, '2024
 INSERT INTO shopping_cart (id, is_active, date, user_id) VALUES (4, true, '2024-12-22 16:30:45.000000', 1);
 
 -- Inyeccion de ShoppingCartProductos (Productos que tiene el usuario en su ShoppingCart)
-INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (1, 12, 1, 4);
-INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (2, 1, 3, 4);
-INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (3, 1, 26, 4);
+-- Productos useruser
+-- Shopping Cart ID: 1
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (1, 10, 23, 1);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (2, 3, 1, 1);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (3, 8, 12, 1);
+-- Shopping Cart ID: 2
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (4, 7, 9, 2);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (5, 10, 13, 2);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (6, 15, 2, 2);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (7, 2, 7, 2);
+-- Shopping Cart ID: 3
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (8, 2, 9, 3);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (9, 1, 24, 3);
+-- Shopping Cart ID: 4
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (10, 12, 1, 4);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (11, 1, 3, 4);
+INSERT INTO shopping_cart_products (id, quantity, product_id, shopping_cart_id) VALUES (12, 1, 26, 4);

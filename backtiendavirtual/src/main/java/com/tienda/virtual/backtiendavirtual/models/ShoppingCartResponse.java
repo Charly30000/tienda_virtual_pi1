@@ -58,7 +58,8 @@ public class ShoppingCartResponse {
             "quantity",
             "sold",
             "total_available",
-            "isBlocked"
+            "isBlocked",
+            "productOwner"
     })
     public static class Product {
 
@@ -86,8 +87,11 @@ public class ShoppingCartResponse {
         @JsonProperty("isBlocked")
         private boolean isBlocked;
 
+        @JsonProperty("productOwner")
+        private String productOwner;
+
         public Product(Long id, String name, String image, Double price, Integer quantity, Integer sold,
-                Integer totalAvailable, boolean isBlocked) {
+                Integer totalAvailable, boolean isBlocked, String productOwner) {
             this.id = id;
             this.name = name;
             this.image = image;
@@ -96,6 +100,7 @@ public class ShoppingCartResponse {
             this.sold = sold;
             this.totalAvailable = totalAvailable;
             this.isBlocked = isBlocked;
+            this.productOwner = productOwner;
         }
 
         @JsonProperty("image")
@@ -176,6 +181,16 @@ public class ShoppingCartResponse {
         @JsonProperty("isBlocked")
         public void setIsBlocked(boolean isBlocked) {
             this.isBlocked = isBlocked;
+        }
+
+        @JsonProperty("productOwner")
+        public String getProductOwner() {
+            return productOwner;
+        }
+
+        @JsonProperty("productOwner")
+        public void setProductOwner(String productOwner) {
+            this.productOwner = productOwner;
         }
     }
 }

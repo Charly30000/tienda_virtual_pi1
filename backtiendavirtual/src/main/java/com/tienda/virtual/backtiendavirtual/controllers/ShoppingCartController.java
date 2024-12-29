@@ -67,7 +67,8 @@ public class ShoppingCartController {
                         shoppingCartProduct.getQuantity(),
                         productSC.getSold(),
                         productSC.getQuantity() - productSC.getSold(),
-                        productSC.isBlocked());
+                        productSC.isBlocked(),
+                        productSC.getUser().getUsername());
                 products.add(product);
             }
 
@@ -279,26 +280,30 @@ public class ShoppingCartController {
     public ResponseEntity<?> getHistoricalShoppingCart() {
         try {
             User user = userUtils.getUserAuthenticated();
-            Optional<ShoppingCart> shoppingCartOptional = shoppingCartService.findActiveCartByUser(user);
-            if (shoppingCartOptional.isEmpty()) {
-                return ResponseMessagesUtils.notFound("ShoppingCart no encontrada");
-            }
-            ShoppingCart shoppingCart = shoppingCartOptional.orElseThrow();
-            List<ShoppingCartProduct> shoppingCartProducts = shoppingCart.getShoppingCartProducts();
-            List<ShoppingCartResponse.Product> products = new ArrayList<>();
-            ShoppingCartResponse response = new ShoppingCartResponse(shoppingCart.getFormatDate(), products);
-            for (ShoppingCartProduct shoppingCartProduct : shoppingCartProducts) {
-                Product productSC = shoppingCartProduct.getProduct();
-                ShoppingCartResponse.Product product = new ShoppingCartResponse.Product(
-                        productSC.getId(),
-                        productSC.getName(),
-                        productSC.getImage(),
-                        productSC.getPrice(),
-                        shoppingCartProduct.getQuantity(),
-                        productSC.getSold(),
-                        productSC.getQuantity() - productSC.getSold(),
-                        productSC.isBlocked());
-                products.add(product);
+            List<ShoppingCart> shoppingCartListBBDD = shoppingCartService
+                    .findShoppingCartsByUserOrderByDateDesc(user);
+
+            List<ShoppingCartResponse> response = new ArrayList<>();
+            for (ShoppingCart shoppingCart : shoppingCartListBBDD) {
+                List<ShoppingCartProduct> shoppingCartProducts = shoppingCart.getShoppingCartProducts();
+                List<ShoppingCartResponse.Product> products = new ArrayList<>();
+                ShoppingCartResponse shoppingCartResponse = new ShoppingCartResponse(shoppingCart.getFormatDate(),
+                        products);
+                for (ShoppingCartProduct shoppingCartProduct : shoppingCartProducts) {
+                    Product productSC = shoppingCartProduct.getProduct();
+                    ShoppingCartResponse.Product product = new ShoppingCartResponse.Product(
+                            productSC.getId(),
+                            productSC.getName(),
+                            productSC.getImage(),
+                            productSC.getPrice(),
+                            shoppingCartProduct.getQuantity(),
+                            productSC.getSold(),
+                            productSC.getQuantity() - productSC.getSold(),
+                            productSC.isBlocked(),
+                            productSC.getUser().getUsername());
+                    products.add(product);
+                }
+                response.add(shoppingCartResponse);
             }
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
