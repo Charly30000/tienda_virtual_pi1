@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tienda.virtual.backtiendavirtual.entities.Product;
+import com.tienda.virtual.backtiendavirtual.models.ValidationErrorsResponse;
 import com.tienda.virtual.backtiendavirtual.services.ProductService;
 
 import jakarta.validation.Valid;
@@ -83,14 +84,21 @@ public class ProductController {
 
     /**
      * Método auxiliar para manejar errores de validación.
+     * 
      * @param result Resultado de validación
      * @return Respuesta con errores
      */
-    private ResponseEntity<?> validation(BindingResult result) {
+    private ResponseEntity<ValidationErrorsResponse> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(err -> {
             errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
         });
-        return ResponseEntity.badRequest().body(errors);
+
+        return ResponseEntity.badRequest()
+                .body(new ValidationErrorsResponse(
+                        "Errores de validación en la solicitud",
+                        HttpStatus.BAD_REQUEST,
+                        true,
+                        errors));
     }
 }

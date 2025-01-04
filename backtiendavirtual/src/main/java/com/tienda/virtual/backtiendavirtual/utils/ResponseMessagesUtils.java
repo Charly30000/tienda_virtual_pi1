@@ -78,4 +78,12 @@ public class ResponseMessagesUtils {
                 true);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    public static final ResponseEntity<GenericResponse> created(String message) {
+        GenericResponse response = new GenericResponse(
+                message,
+                HttpStatus.CREATED,
+                true);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }

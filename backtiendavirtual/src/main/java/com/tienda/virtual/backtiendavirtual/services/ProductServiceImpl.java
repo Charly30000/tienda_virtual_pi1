@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tienda.virtual.backtiendavirtual.entities.Product;
+import com.tienda.virtual.backtiendavirtual.entities.User;
 import com.tienda.virtual.backtiendavirtual.repositories.ProductRepository;
 
 @Service
@@ -44,5 +47,23 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void deleteById(Long id) {
         productRepository.deleteById(id);
+    }
+
+    /**
+     * Obtenemos los Productos del usuario paginados
+     * En este metodo además obtenemos las categorias y labels propias del producto en cuestion 
+     * (mandamos la lista de productos que tiene el usuario para obtener unicamente
+     * sus respectivas categorias y labels), consiguiendo asi minimizar la cantidad de consultas
+     * que realizamos a la BBDD
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> findByUserPageable(User user, Pageable pageable) {
+        Page<Product> productsPage = productRepository.findByUser(user, pageable);
+        // Cargar categorías
+        List<Product> productsWithCategories = productRepository.fetchCategories(productsPage.getContent());
+        // Cargar etiquetas
+        productRepository.fetchLabels(productsWithCategories);
+        return productsPage;
     }
 }
