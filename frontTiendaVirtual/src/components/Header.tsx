@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import HomeIcon from "@mui/icons-material/Home";
 import ShoppingBasket from "@mui/icons-material/ShoppingBasket";
 import Navbar from "./Navbar";
 import { Link } from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -19,7 +19,10 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearchResults = (results: { id: number; name: string }[], query: string) => {
+  const handleSearchResults = (
+    results: { id: number; name: string }[],
+    query: string
+  ) => {
     setFilteredProducts(results);
     setSearchQuery(query);
   };
@@ -27,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   return (
     <div className="w-full bg-blue-950 px-5 py-2 flex flex-col">
       <div className="flex justify-between items-center">
-        <HomeIcon
+        <MenuIcon
           sx={{ color: "white" }}
           fontSize="large"
           className="cursor-pointer"
@@ -58,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
               </div>
             ))
           ) : (
-            <p>No products found</p>
+            <p>Producto no encontrados</p>
           )}
         </div>
       )}

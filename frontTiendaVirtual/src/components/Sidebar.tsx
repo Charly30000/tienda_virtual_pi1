@@ -30,13 +30,13 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 
         <div className="flex flex-col gap-2">
           <Link
-            to="company-tools"
+            to="/company-tools"
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
             Herraminetas de Empresa
           </Link>
 
           <Link
-            to="/admin-tools"
+            to="/admin-products-tools"
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
             Herramientas de admin
           </Link>
@@ -44,9 +44,9 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 
         <div className="flex">
           <Link
-            to="privacy-policy"
+            to="/privacy-policy"
             className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-            Privacy Policy
+            Politica de privacidad
           </Link>
 
         
