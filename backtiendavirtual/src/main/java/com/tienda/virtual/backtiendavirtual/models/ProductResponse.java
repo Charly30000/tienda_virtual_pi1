@@ -5,78 +5,68 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+        "id",
         "name",
         "description",
+        "image",
         "price",
         "quantity",
+        "sold",
+        "productOwner",
         "categories",
         "labels"
 })
-public class ProductRequest {
+public class ProductResponse {
 
+    @JsonProperty("id")
+    private Long id;
     @JsonProperty("name")
-    @Size(max = 250)
-    @NotBlank
-    @NotEmpty
-    @NotNull
     private String name;
-
     @JsonProperty("description")
-    @Size(max = 3000)
-    @NotBlank
-    @NotEmpty
-    @NotNull
     private String description;
-
+    @JsonProperty("image")
+    private String image;
     @JsonProperty("price")
-    @NotNull
-    @DecimalMin(value = "0.0", inclusive = true)
-    @DecimalMax(value = "9000000000000.0")
     private Double price;
-
     @JsonProperty("quantity")
-    @Min(value = 1)
-    @Max(value = 2147483647)
-    @NotNull
     private Integer quantity;
-
+    @JsonProperty("sold")
+    private Integer sold;
+    @JsonProperty("productOwner")
+    private String productOwner;
     @JsonProperty("categories")
     @Valid
-    @NotNull
-    @NotEmpty
-    @Size(max = 50)
     private List<Category> categories;
-
     @JsonProperty("labels")
     @Valid
-    @NotNull
-    @NotEmpty
-    @Size(max = 50)
     private List<Label> labels;
 
-    public ProductRequest() {
-    }
-
-    public ProductRequest(String name, String description, Double price, Integer quantity, List<Category> categories,
-            List<Label> labels) {
+    public ProductResponse(Long id, String name, String description, String image, Double price, Integer quantity,
+            Integer sold, String productOwner, List<Category> categories, List<Label> labels) {
         super();
+        this.id = id;
         this.name = name;
         this.description = description;
+        this.image = image;
         this.price = price;
         this.quantity = quantity;
+        this.sold = sold;
+        this.productOwner = productOwner;
         this.categories = categories;
         this.labels = labels;
+    }
+
+    @JsonProperty("id")
+    public Long getId() {
+        return id;
+    }
+
+    @JsonProperty("id")
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @JsonProperty("name")
@@ -99,6 +89,16 @@ public class ProductRequest {
         this.description = description;
     }
 
+    @JsonProperty("image")
+    public String getImage() {
+        return image;
+    }
+
+    @JsonProperty("image")
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @JsonProperty("price")
     public Double getPrice() {
         return price;
@@ -117,6 +117,26 @@ public class ProductRequest {
     @JsonProperty("quantity")
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    @JsonProperty("sold")
+    public Integer getSold() {
+        return sold;
+    }
+
+    @JsonProperty("sold")
+    public void setSold(Integer sold) {
+        this.sold = sold;
+    }
+
+    @JsonProperty("productOwner")
+    public String getProductOwner() {
+        return productOwner;
+    }
+
+    @JsonProperty("productOwner")
+    public void setProductOwner(String productOwner) {
+        this.productOwner = productOwner;
     }
 
     @JsonProperty("categories")
@@ -147,16 +167,14 @@ public class ProductRequest {
     public static class Category {
 
         @JsonProperty("id")
-        @NotNull
         private Long id;
-
         @JsonProperty("name")
-        @Size(max = 100)
-        @NotBlank
-        @NotEmpty
-        @NotNull
         private String name;
 
+        /**
+         * No args constructor for use in serialization
+         *
+         */
         public Category() {
         }
 
@@ -196,16 +214,14 @@ public class ProductRequest {
     public static class Label {
 
         @JsonProperty("id")
-        @NotNull
         private Long id;
-
         @JsonProperty("name")
-        @Size(max = 50)
-        @NotBlank
-        @NotEmpty
-        @NotNull
         private String name;
 
+        /**
+         * No args constructor for use in serialization
+         *
+         */
         public Label() {
         }
 

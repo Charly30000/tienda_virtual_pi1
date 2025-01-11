@@ -93,10 +93,12 @@ public class Product {
         inverseJoinColumns = @JoinColumn(name = "label_id")
     )
     @JsonIgnoreProperties({"products", "handler", "hibernateLazyInitializer"})
+    @Size(max = 50)
     private List<Label> labels;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"product", "handler", "hibernateLazyInitializer"})
+    @Size(max = 50)
     private List<ShoppingCartProduct> shoppingCartProducts;
 
     public Product() {
@@ -120,8 +122,6 @@ public class Product {
         this.user = user;
         this.categories = categories;
         this.labels = labels;
-        this.categories = new ArrayList<>();
-        this.labels = new ArrayList<>();
         this.shoppingCartProducts = new ArrayList<>();
     }
 

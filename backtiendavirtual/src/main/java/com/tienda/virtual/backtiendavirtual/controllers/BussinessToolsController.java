@@ -1,9 +1,14 @@
 package com.tienda.virtual.backtiendavirtual.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,14 +17,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tienda.virtual.backtiendavirtual.constants.ConstantansUploads;
 import com.tienda.virtual.backtiendavirtual.constants.ConstantsRoles;
 import com.tienda.virtual.backtiendavirtual.entities.Category;
 import com.tienda.virtual.backtiendavirtual.entities.Label;
@@ -30,6 +42,7 @@ import com.tienda.virtual.backtiendavirtual.exceptions.UserNotFoundException;
 import com.tienda.virtual.backtiendavirtual.models.BussinessProductResponse;
 import com.tienda.virtual.backtiendavirtual.models.ProductInvalidCategoryLabelResponse;
 import com.tienda.virtual.backtiendavirtual.models.ProductRequest;
+import com.tienda.virtual.backtiendavirtual.models.ProductResponse;
 import com.tienda.virtual.backtiendavirtual.models.ValidationErrorsResponse;
 import com.tienda.virtual.backtiendavirtual.services.CategoryService;
 import com.tienda.virtual.backtiendavirtual.services.LabelService;
@@ -37,7 +50,10 @@ import com.tienda.virtual.backtiendavirtual.services.ProductService;
 import com.tienda.virtual.backtiendavirtual.utils.ResponseMessagesUtils;
 import com.tienda.virtual.backtiendavirtual.utils.UserUtils;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 
 @RestController
 @RequestMapping("/api/bussinessTools")
@@ -109,14 +125,41 @@ public class BussinessToolsController {
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = "multipart/form-data")
     @Secured(ConstantsRoles.ROLE_BUSSINESS)
     public ResponseEntity<?> createProduct(
-            @Valid @RequestBody ProductRequest product, BindingResult result) {
+            @RequestParam("product") String productJson,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
         try {
-            if (result.hasFieldErrors()) {
-                return validation(result);
+            if (image != null && !image.isEmpty()) {
+                String contentType = image.getContentType();
+                if (!(ConstantansUploads.IMAGE_JPG.equals(contentType)
+                        || ConstantansUploads.IMAGE_PNG.equals(contentType))) {
+                    return ResponseMessagesUtils.badRequest("Solo se permite una imagen en formato JPG o PNG.");
+                }
             }
+            // Deserializar JSON a ProductRequest
+            ObjectMapper objectMapper = new ObjectMapper();
+            ProductRequest product = objectMapper.readValue(productJson, ProductRequest.class);
+
+            // Crear un BindingResult para manejar los errores de validación
+            BindingResult bindingResult = new BeanPropertyBindingResult(product, "product");
+
+            // Validamos manualmente el objeto deserializado
+            Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+            Set<ConstraintViolation<ProductRequest>> violations = validator.validate(product);
+
+            for (ConstraintViolation<ProductRequest> violation : violations) {
+                String fieldName = violation.getPropertyPath().toString();
+                String errorMessage = violation.getMessage();
+                bindingResult.addError(new FieldError("product", fieldName, errorMessage));
+            }
+
+            // Pasar los errores a tu método de validación personalizado
+            if (bindingResult.hasErrors()) {
+                return validation(bindingResult);
+            }
+
             User user = userUtils.getUserAuthenticated();
 
             // Obtener los IDs únicos de categorías y etiquetas del producto
@@ -134,21 +177,19 @@ public class BussinessToolsController {
                     .toList();
 
             // Consultamos categorías y etiquetas existentes en la base de datos
-            List<Long> existingCategoryIds = categoryService.findAllById(categoryIds).stream()
-                    .map(Category::getId)
-                    .toList();
+            List<Category> existingCategoryIds = categoryService.findAllById(categoryIds);
 
-            List<Long> existingLabelIds = labelService.findAllById(labelIds).stream()
-                    .map(Label::getId)
-                    .toList();
+            List<Label> existingLabelIds = labelService.findAllById(labelIds);
 
             // Determinamos cuáles no existen y mapearlos a sus objetos originales
             List<ProductRequest.Category> nonExistingCategories = categories.stream()
-                    .filter(category -> !existingCategoryIds.contains(category.getId()))
+                    .filter(category -> existingCategoryIds.stream()
+                            .noneMatch(existing -> existing.getId().equals(category.getId())))
                     .toList();
 
             List<ProductRequest.Label> nonExistingLabels = labels.stream()
-                    .filter(label -> !existingLabelIds.contains(label.getId()))
+                    .filter(label -> existingLabelIds.stream()
+                            .noneMatch(existing -> existing.getId().equals(label.getId())))
                     .toList();
 
             // Si hay categorías o etiquetas que no existen, devolver respuesta
@@ -171,10 +212,34 @@ public class BussinessToolsController {
                                 labelsError));
             }
 
-            // Proceder con la creación del producto
-            // Aquí se implementaría la lógica de guardado del producto
+            String imagePath = saveFile(image);
+            final Integer DEFAULT_ITEMS_SOLD = 0;
+            Product newProduct = productService.save(new Product(
+                    product.getName(),
+                    product.getDescription(),
+                    false,
+                    imagePath,
+                    product.getPrice(),
+                    product.getQuantity(),
+                    DEFAULT_ITEMS_SOLD,
+                    user,
+                    existingCategoryIds,
+                    existingLabelIds));
 
-            return ResponseMessagesUtils.created("Validacion correcta, implementar respuesta correcta");
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    new ProductResponse(
+                            newProduct.getId(),
+                            newProduct.getName(),
+                            newProduct.getDescription(),
+                            newProduct.getImage(),
+                            newProduct.getPrice(),
+                            newProduct.getQuantity(),
+                            newProduct.getSold(),
+                            user.getUsername(),
+                            newProduct.getCategories().stream()
+                                    .map(np -> new ProductResponse.Category(np.getId(), np.getName())).toList(),
+                            newProduct.getLabels().stream()
+                                    .map(np -> new ProductResponse.Label(np.getId(), np.getName())).toList()));
         } catch (UserBlockedException e) {
             e.printStackTrace();
             return ResponseMessagesUtils.userBlocked();
@@ -208,5 +273,25 @@ public class BussinessToolsController {
                         HttpStatus.BAD_REQUEST,
                         true,
                         errors));
+    }
+
+    private String saveFile(MultipartFile image) throws IOException {
+        // Manejo opcional de la imagen
+        String imagePath = "";
+        if (image != null && !image.isEmpty()) {
+            String uploadsDir = ConstantansUploads.UPLOADS_FOLDER_LOCATION; // Ruta de almacenamiento
+            File dir = new File(uploadsDir);
+            if (!dir.exists()) {
+                // Creamos la carpeta si no existe
+                dir.mkdirs();
+            }
+
+            String uniqueFileName = UUID.randomUUID().toString().replace("-", "") + "_" + image.getOriginalFilename();
+            imagePath = uploadsDir + "/" + uniqueFileName;
+
+            File file = new File(imagePath);
+            image.transferTo(file); // Guardar archivo
+        }
+        return imagePath;
     }
 }
