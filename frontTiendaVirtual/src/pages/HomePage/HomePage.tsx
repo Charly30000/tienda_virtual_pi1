@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import React from "react";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import Card from "@/components/Card";
 
 const HomePage = () => {
   const [sidebarOpen, setSiebarOpen] = useState(false);
@@ -40,73 +41,14 @@ const HomePage = () => {
           </div>
 
           <div className="w-full mt-3 h-1/2">
-            <ul className="flex justify-between">
-              <li className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
-                <div className="w-[300px] bg-black h-40  rounded-lg"></div>
+            <div className="flex justify-between">
+              <Card />
+              <Card />
 
-                <h3>Play 1</h3>
+              <Card />
 
-                <p>$100</p>
-
-                <p>5 en stock</p>
-
-                <button
-                  type="button"
-                  className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 w-full">
-                  Añadir
-                </button>
-              </li>
-
-              <li className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
-                <div className="w-[300px] bg-black h-40  rounded-lg"></div>
-
-                <h3>Play 1</h3>
-
-                <p>$100</p>
-
-                <p>5 en stock</p>
-
-                <button
-                  type="button"
-                  className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 w-full">
-                  Añadir
-                </button>
-              </li>
-
-              <li className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
-                <div className="w-[300px] bg-black h-40  rounded-lg"></div>
-
-                <h3>Play 1</h3>
-
-                <p>$100</p>
-
-                <p>5 en stock</p>
-
-                <button
-                  type="button"
-                  className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 w-full">
-                  Añadir
-                </button>
-              </li>
-
-              <li className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
-                <div className="w-[300px] bg-black h-40  rounded-lg"></div>
-
-                <h3>Play 1</h3>
-
-                <p>$100</p>
-
-                <p>5 en stock</p>
-
-                <button
-                  type="button"
-                  className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 w-full">
-                  Añadir
-                </button>
-              </li>
-
-             
-            </ul>
+              <Card />
+            </div>
           </div>
 
           <div className="pt-3 flex justify-center">

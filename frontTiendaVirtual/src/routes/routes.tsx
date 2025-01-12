@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "@/pages/HomePage/HomePage";
 import { LoginPage } from "@/pages/LoginPage/LoginPage";
 import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
-import AdminToolsPage from "@/pages/AdminToolsPage/AdminToolsPage";
+import AdminProductsToolsPage from "@/pages/AdminProductsToolsPage/AdminProductsToolsPage";
+import AdminPersonToolsPage from "@/pages/AdminPersonToolsPage/AdminPersonToolsPage";
 import CartPage from "@/pages/CartPage/CartPage";
 import CompanyToolsPage from "@/pages/CompanyToolsPage/CompanyToolsPage";
 import PaymentPage from "@/pages/PaymentPage/PaymentPage";
@@ -16,7 +17,8 @@ const AppRoutes = () => (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/admin-tools" element={<AdminToolsPage />} />
+      <Route path="/admin-products-tools" element={<AdminProductsToolsPage />} />
+      <Route path="/admin-person-tools" element={<AdminPersonToolsPage />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/company-tools" element={<CompanyToolsPage />} />
       <Route path="/payment" element={<PaymentPage />} />
