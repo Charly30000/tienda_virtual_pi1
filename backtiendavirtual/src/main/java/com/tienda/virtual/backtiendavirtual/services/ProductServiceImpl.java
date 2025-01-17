@@ -32,6 +32,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
+    public Product update(Long id, Product product) {
+        product.setId(id);
+        this.findById(id).orElseThrow();
+        return productRepository.save(product);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
@@ -51,9 +59,11 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * Obtenemos los Productos del usuario paginados
-     * En este metodo además obtenemos las categorias y labels propias del producto en cuestion 
+     * En este metodo además obtenemos las categorias y labels propias del producto
+     * en cuestion
      * (mandamos la lista de productos que tiene el usuario para obtener unicamente
-     * sus respectivas categorias y labels), consiguiendo asi minimizar la cantidad de consultas
+     * sus respectivas categorias y labels), consiguiendo asi minimizar la cantidad
+     * de consultas
      * que realizamos a la BBDD
      */
     @Override
