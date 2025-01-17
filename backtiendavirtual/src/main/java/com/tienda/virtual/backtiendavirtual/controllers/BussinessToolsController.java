@@ -20,6 +20,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -326,6 +327,14 @@ public class BussinessToolsController {
                 return ResponseMessagesUtils.notFound("El producto que intentas actualizar no existe");
             }
 
+            if (productDB.get().isBlocked()) {
+                return ResponseMessagesUtils.locked("El producto que intentas actualizar se encuentra bloqueado");
+            }
+
+            if (!productDB.get().getUser().equals(user)) {
+                return ResponseMessagesUtils.badRequest("El producto que intentas actualizar no te pertenece");
+            }
+
             // Obtener los IDs únicos de categorías y etiquetas del producto
             List<ProductRequest.Category> categories = product.getCategories();
             List<ProductRequest.Label> labels = product.getLabels();
@@ -433,6 +442,40 @@ public class BussinessToolsController {
             e.printStackTrace();
             return ResponseMessagesUtils.serverError();
         }
+    }
+
+    @DeleteMapping("/delete/product/{id}")
+    @Secured(ConstantsRoles.ROLE_BUSSINESS)
+    public ResponseEntity<?> blockProduct(@PathVariable Long id) {
+        try {
+            User user = userUtils.getUserAuthenticated();
+            Optional<Product> productDB = productService.findById(id);
+            if (productDB.isEmpty()) {
+                return ResponseMessagesUtils.notFound("El producto que intentas actualizar no existe");
+            }
+            if (!productDB.get().getUser().equals(user)) {
+                return ResponseMessagesUtils.notFound("El producto que intentas actualizar no existe");
+            }
+
+            Product blockedProduct = productDB.get();
+            blockedProduct.setBlocked(true);
+            productService.save(blockedProduct);
+
+            return ResponseMessagesUtils.ok("Producto bloqueado");
+        } catch (UserBlockedException e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.userBlocked();
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.userNotFound();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.serverError();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseMessagesUtils.serverError();
+        }
+
     }
 
     /**
