@@ -76,4 +76,24 @@ public class ProductServiceImpl implements ProductService {
         productRepository.fetchLabels(productsWithCategories);
         return productsPage;
     }
+
+    /**
+     * Obtenemos los Productos paginados que contengan el name
+     * En este metodo además obtenemos las categorias y labels propias del producto
+     * en cuestion
+     * (mandamos la lista de productos que tiene el usuario para obtener unicamente
+     * sus respectivas categorias y labels), consiguiendo asi minimizar la cantidad
+     * de consultas
+     * que realizamos a la BBDD
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> findByNamePageable(String name, Pageable pageable) {
+        Page<Product> productsPage = productRepository.findByNameContainingIgnoreCase(name, pageable);
+        // Cargar categorías
+        List<Product> productsWithCategories = productRepository.fetchCategories(productsPage.getContent());
+        // Cargar etiquetas
+        productRepository.fetchLabels(productsWithCategories);
+        return productsPage;
+    }
 }

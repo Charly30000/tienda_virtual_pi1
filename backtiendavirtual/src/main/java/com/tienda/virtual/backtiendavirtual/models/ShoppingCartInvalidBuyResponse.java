@@ -33,7 +33,8 @@ public class ShoppingCartInvalidBuyResponse extends GenericResponse {
             "productOwner",
             "isBlocked",
             "available",
-            "requested"
+            "requested",
+            "productOwnerBlocked"
     })
     public static class InvalidProducts {
 
@@ -55,14 +56,18 @@ public class ShoppingCartInvalidBuyResponse extends GenericResponse {
         @JsonProperty("requested")
         private Integer requested;
 
+        @JsonProperty("productOwnerBlocked")
+        private boolean productOwnerBlocked;
+
         public InvalidProducts(Long id, String name, String productOwner, boolean isBlocked, Integer available,
-                Integer requested) {
+                Integer requested, boolean productOwnerBlocked) {
             this.id = id;
             this.name = name;
             this.productOwner = productOwner;
             this.isBlocked = isBlocked;
             this.available = available;
             this.requested = requested;
+            this.productOwnerBlocked = productOwnerBlocked;
         }
 
         @JsonProperty("id")
@@ -124,5 +129,16 @@ public class ShoppingCartInvalidBuyResponse extends GenericResponse {
         public void setRequested(Integer requested) {
             this.requested = requested;
         }
+        
+        @JsonProperty("productOwnerBlocked")
+        public boolean isProductOwnerBlocked() {
+            return productOwnerBlocked;
+        }
+        
+        @JsonProperty("productOwnerBlocked")
+        public void setProductOwnerBlocked(boolean productOwnerBlocked) {
+            this.productOwnerBlocked = productOwnerBlocked;
+        }
+
     }
 }

@@ -180,6 +180,13 @@ public class User {
         this.products = products;
     }
 
+    public void populateTransientFields() {
+        boolean hasRoleAdmin = roles != null && roles.stream().anyMatch(role -> ConstantsRoles.ROLE_ADMIN.equals(role.getName()));
+        boolean hasRoleBussiness = roles != null && roles.stream().anyMatch(role -> ConstantsRoles.ROLE_BUSSINESS.equals(role.getName()));
+        setIsAdmin(hasRoleAdmin);
+        setIsBussiness(hasRoleBussiness);
+    }
+
     @PrePersist
     public void prePersist() {
         boolean hasRoleAdmin = getRoles().stream().anyMatch(role -> ConstantsRoles.ROLE_ADMIN.equals(role.getName()));

@@ -24,4 +24,6 @@ public interface ProductService {
 
     // Metodo para obtener los Productos de un Usuario paginados
     Page<Product> findByUserPageable(User user, Pageable pageable);
+    // metodo para obtener los Productos paginados
+    Page<Product> findByNamePageable(String name, Pageable pageable);
 }

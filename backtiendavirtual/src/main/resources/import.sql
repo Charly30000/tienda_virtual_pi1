@@ -8,53 +8,174 @@ INSERT INTO users (id, username, password, email, enabled) VALUES (1, 'useruser'
 INSERT INTO users (id, username, password, email, enabled) VALUES (2, 'bussinessbussiness', '$2a$10$Ihwc5i0chA7M.a3Om2kZ7u5nOa4qV74Dq8F9xJOozio23Aw6haIGC', 'bussinessbussiness@email.com', true);
 INSERT INTO users (id, username, password, email, enabled) VALUES (3, 'adminadmin', '$2a$10$rIp2a6J.SFMJWgwCkrf2jOc32vqkGUI03uPt0tvqih2Y8UnpJilEy', 'adminadmin@email.com', true);
 
+-- Inyección de usuarios con ROLE_USER
+INSERT INTO users (id, username, password, email, enabled) VALUES (4, 'john_doe', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'john.doe@email.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (5, 'jane_doe', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'jane.doe@email.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (6, 'alex_smith', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'alex.smith@email.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (7, 'emily_clark', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'emily.clark@email.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (8, 'michael_brown', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'michael.brown@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (9, 'sarah_jones', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'sarah.jones@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (10, 'david_taylor', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'david.taylor@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (11, 'linda_wilson', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'linda.wilson@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (12, 'chris_white', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'chris.white@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (13, 'amy_harris', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'amy.harris@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (14, 'james_martin', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'james.martin@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (15, 'olivia_lewis', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'olivia.lewis@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (16, 'daniel_hall', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'daniel.hall@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (17, 'sophia_young', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'sophia.young@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (18, 'mark_king', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'mark.king@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (19, 'emma_scott', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'emma.scott@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (20, 'lucas_adams', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'lucas.adams@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (21, 'mia_moore', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'mia.moore@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (22, 'ethan_thomas', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'ethan.thomas@email.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (23, 'ava_lee', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'ava.lee@email.com', true);
+
+-- Inyección de usuarios con ROLE_BUSSINESS
+INSERT INTO users (id, username, password, email, enabled) VALUES (24, 'switch_tech', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'contact@switchtech.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (25, 'playstation_world', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'support@playstationworld.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (26, 'xbox_zone', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'info@xboxzone.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (27, 'pi_hub', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'hello@pihub.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (28, 'arduino_masters', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'team@arduinomasters.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (29, 'iphone_pro_shop', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'sales@iphoneproshop.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (30, 'samsung_haven', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'support@samsunghaven.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (31, 'macbook_store', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'contact@macbookstore.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (32, 'thinkpad_corner', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'help@thinkpadcorner.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (33, 'watch_universe', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'info@watchuniverse.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (34, 'tech_audio_shop', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'contact@techaudioshop.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (35, 'gopro_gear', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'info@goprogear.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (36, 'kindle_land', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'sales@kindleland.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (37, 'gaming_haven', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'support@gaminghaven.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (38, 'peripherals_plus', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'team@peripheralsplus.com', true);
+
+-- Inyección de usuarios con ROLE_ADMIN
+INSERT INTO users (id, username, password, email, enabled) VALUES (39, 'admin_pro', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'admin@adminpro.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (40, 'tech_guru', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'guru@techguru.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (41, 'sys_master', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'master@sysmaster.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (42, 'root_admin', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'root@admin.com', true);
+INSERT INTO users (id, username, password, email, enabled) VALUES (43, 'ultimate_admin', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'ultimate@admin.com', true);
+
 -- Inyeccion de roles a los usuarios
 -- Role User:
 INSERT INTO users_roles (user_id, role_id) VALUES (1, 3);
+
 -- Role Bussiness:
 INSERT INTO users_roles (user_id, role_id) VALUES (2, 3);
 INSERT INTO users_roles (user_id, role_id) VALUES (2, 2);
+
 -- Role Admin:
 INSERT INTO users_roles (user_id, role_id) VALUES (3, 3);
 INSERT INTO users_roles (user_id, role_id) VALUES (3, 2);
 INSERT INTO users_roles (user_id, role_id) VALUES (3, 1);
 
+-- Asignar ROLE_USER a los usuarios del ID 4 al ID 23:
+INSERT INTO users_roles (user_id, role_id) VALUES (4, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (5, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (6, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (7, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (8, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (9, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (10, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (11, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (12, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (13, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (14, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (15, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (16, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (17, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (18, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (19, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (20, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (21, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (22, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (23, 3);
+
+-- Asignar ROLE_BUSSINESS y ROLE_USER a los usuarios del ID 24 al ID 38:
+INSERT INTO users_roles (user_id, role_id) VALUES (24, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (24, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (25, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (25, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (26, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (26, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (27, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (27, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (28, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (28, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (29, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (29, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (30, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (30, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (31, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (31, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (32, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (32, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (33, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (33, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (34, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (34, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (35, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (35, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (36, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (36, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (37, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (37, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (38, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (38, 2);
+
+-- Asignar ROLE_ADMIN, ROLE_BUSSINESS y ROLE_USER a los usuarios del ID 39 al ID 43:
+INSERT INTO users_roles (user_id, role_id) VALUES (39, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (39, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (39, 1);
+INSERT INTO users_roles (user_id, role_id) VALUES (40, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (40, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (40, 1);
+INSERT INTO users_roles (user_id, role_id) VALUES (41, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (41, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (41, 1);
+INSERT INTO users_roles (user_id, role_id) VALUES (42, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (42, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (42, 1);
+INSERT INTO users_roles (user_id, role_id) VALUES (43, 3);
+INSERT INTO users_roles (user_id, role_id) VALUES (43, 2);
+INSERT INTO users_roles (user_id, role_id) VALUES (43, 1);
+
 -- Inyeccion de productos de prueba
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (1, 'Nintendo Switch', 'Consola de videojuegos híbrida', '/uploads/f2f194da07e745d592ab87cf138b263e_Nintendo Switch.jpg', 999, 1000, 299.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (2, 'PlayStation 5', 'Consola de videojuegos de última generación', '/uploads/5029f9270fe8462c93c2916759e9ee87_PlayStation 5.jpg', 391, 500, 499.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (3, 'Xbox Series X', 'Consola de videojuegos de alta gama', '/uploads/5e0551b0962c49819b8ee24ad08feb37_Xbox Series X.jpg', 14, 600, 499.99, true, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (4, 'Raspberry Pi 4', 'Mini computadora versátil', '/uploads/e066725da527475b855c4abe98352e8c_Raspberry Pi 4.jpg', 3000, 3000, 35.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (5, 'Arduino Uno', 'Placa de desarrollo electrónica', '/uploads/4d030b9721034184ba53124c959cbcb0_Arduino Uno.png', 780, 5000, 22.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (6, 'iPhone 14', 'Smartphone de alta gama', '/uploads/cc8f93af0d024ff3ae9ad0637bfc2e67_iPhone 14.jpg', 92, 100, 999.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (7, 'Samsung Galaxy S23', 'Smartphone Android de última generación', '/uploads/e9bb8b43863d4e25a001efe79ae2f4cf_Samsung Galaxy S23.png', 103, 150, 899.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (8, 'MacBook Pro', 'Portátil profesional de Apple', '/uploads/4d525696473b4d3ca83f0fd16dec27a7_MacBook Pro.jpg', 12, 50, 1999.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (9, 'Dell XPS 13', 'Ultrabook de alta gama', '/uploads/1718576419714ec3b73895a97f569568_Dell XPS 13.jpg', 67, 70, 1299.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (10, 'Lenovo ThinkPad X1', 'Laptop empresarial de alta calidad', '/uploads/4f6160148854467f8218eac0ff01850e_Lenovo ThinkPad X1.png', 9, 80, 1399.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (11, 'Apple Watch Series 8', 'Reloj inteligente de Apple', '/uploads/b45c80119b4c47be8f758c0829b4b445_Apple Watch Series 8.png', 9, 200, 399.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (12, 'Samsung Galaxy Watch 5', 'Reloj inteligente con Android', '/uploads/c08c363c5ab44a82a6ae18448bd76b6e_Samsung Galaxy Watch 5.jpg', 110, 250, 299.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (13, 'Sony WH-1000XM5', 'Auriculares con cancelación de ruido', '/uploads/e130e5bdef914fbdbd7cee6cddb08331_Sony WH-1000XM5.jpg', 138, 300, 349.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (14, 'Bose QuietComfort 45', 'Auriculares inalámbricos de calidad', '/uploads/799a5695e9fe4875a7a0b4d63d89ae0d_Bose QuietComfort 45.png', 200, 200, 329.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (15, 'GoPro HERO11', 'Cámara de acción resistente', '/uploads/2a29e0cfcd9e417eb6dbd294f370e04c_GoPro HERO11.png', 217, 400, 399.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (16, 'DJI Mini 3 Pro', 'Drone con cámara 4K', '/uploads/5bb43373d85b496a807e0c8b0f3c9ec7_DJI Mini 3 Pro.jpg', 27, 100, 749.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (17, 'Kindle Paperwhite', 'Lector de libros electrónicos', '/uploads/dfe5ae8374864af38150b69f45bd740f_Kindle Paperwhite.jpg', 395, 500, 129.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (18, 'Amazon Echo Dot', 'Altavoz inteligente con Alexa', '/uploads/efa5a5382f78489f8f1914bf6ad05fda_Amazon Echo Dot.jpg', 705, 800, 49.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (19, 'Google Nest Hub', 'Pantalla inteligente con Google Assistant', '/uploads/5a7a2015a0bb480f92de11258304cd59_Google Nest Hub.png', 283, 300, 99.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (20, 'Logitech MX Master 3', 'Ratón inalámbrico avanzado', '/uploads/15de963fc61140c7a729955f9927aef2_Logitech MX Master 3.png', 4, 400, 99.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (21, 'Corsair K95 RGB', 'Teclado mecánico para gaming', '/uploads/b488fa3754584069b1862a8188cd869d_Corsair K95 RGB.png', 36, 150, 199.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (22, 'Razer DeathAdder V3', 'Ratón para gaming de alta precisión', '/uploads/6db19a58975e4a73a0c28a0161173f6d_Razer DeathAdder V3.png', 224, 250, 69.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (23, 'MSI Optix MAG271CQR', 'Monitor curvo para gaming', '/uploads/fef6aeb8ea3440db91a3f6444041e8e2_MSI Optix MAG271CQR.jpg', 56, 100, 349.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (24, 'Asus ROG Swift PG259QNR', 'Monitor de gaming de 360Hz', '/uploads/af4c90c8974a4e828d22454b8450a552_Asus ROG Swift PG259QNR.png', 47, 50, 699.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (25, 'HyperX Cloud Alpha', 'Auriculares para gaming', '/uploads/21b7647ebbb14afaa2d9ed5db933cabc_HyperX Cloud Alpha.png', 168, 300, 99.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (26, 'Acer Predator Helios 300', 'Laptop para gaming', '/uploads/bc1b8dbd2ec24b7e936e648050ca926b_Acer Predator Helios 300.png', 19, 80, 1499.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (27, 'NVIDIA GeForce RTX 4090', 'Tarjeta gráfica de alto rendimiento', '/uploads/ade00df0e5c14af881eff588ba10b994_NVIDIA GeForce RTX 4090.png', 7, 20, 1599.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (28, 'AMD Ryzen 9 7950X', 'Procesador de alta gama', '/uploads/7922f0a1ad904fb3aa2b77dcf875c4c0_AMD Ryzen 9 7950X.jpg', 55, 100, 699.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (29, 'Intel Core i9-13900K', 'Procesador de última generación', '/uploads/b11d36f0b7704523a885a20693ebfa94_Intel Core i9-13900K.jpg', 119, 120, 749.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (30, 'Samsung T7 Portable SSD', 'Disco SSD portátil', '/uploads/4905f062eb3c4811b9033bb0603d9cd0_Samsung T7 Portable SSD.png', 245, 300, 119.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (31, 'WD Black SN850', 'SSD NVMe para gaming', '/uploads/4655174ced454c4c8f619a4d1995a4ac_WD Black SN850.jpg', 173, 250, 229.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (32, 'Seagate IronWolf Pro', 'Disco duro para NAS', '/uploads/d1e1fcba70054b2d81751195666c8dcb_Seagate IronWolf Pro.png', 37, 200, 149.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (33, 'Philips Hue Starter Kit', 'Kit de iluminación inteligente', '/uploads/2d3ffcffe2a94bbc8c48ad7e1d12da37_Philips Hue Starter Kit.jpg', 91, 150, 199.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (34, 'Nanoleaf Shapes', 'Paneles de iluminación decorativa', '/uploads/75d308f5a16d41b79f087152f707ddf8_Nanoleaf Shapes.jpg', 3, 50, 179.99, false, 2);
-INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (35, 'Theragun Elite', 'Pistola de masaje avanzada', '/uploads/7469462f8553483396bf413a4c0ada4c_Theragun Elite.jpg', 93, 100, 399.99, false, 2);
+-- Asignación de productos a usuarios con ROLE_BUSSINESS
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (1, 'Nintendo Switch', 'Consola de videojuegos híbrida', '/uploads/f2f194da07e745d592ab87cf138b263e_Nintendo Switch.jpg', 999, 1000, 299.99, false, 24);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (2, 'PlayStation 5', 'Consola de videojuegos de última generación', '/uploads/5029f9270fe8462c93c2916759e9ee87_PlayStation 5.jpg', 391, 500, 499.99, false, 24);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (3, 'Xbox Series X', 'Consola de videojuegos de alta gama', '/uploads/5e0551b0962c49819b8ee24ad08feb37_Xbox Series X.jpg', 14, 600, 499.99, true, 25);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (4, 'Raspberry Pi 4', 'Mini computadora versátil', '/uploads/e066725da527475b855c4abe98352e8c_Raspberry Pi 4.jpg', 3000, 3000, 35.99, false, 25);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (5, 'Arduino Uno', 'Placa de desarrollo electrónica', '/uploads/4d030b9721034184ba53124c959cbcb0_Arduino Uno.png', 780, 5000, 22.99, false, 26);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (6, 'iPhone 14', 'Smartphone de alta gama', '/uploads/cc8f93af0d024ff3ae9ad0637bfc2e67_iPhone 14.jpg', 92, 100, 999.99, false, 26);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (7, 'Samsung Galaxy S23', 'Smartphone Android de última generación', '/uploads/e9bb8b43863d4e25a001efe79ae2f4cf_Samsung Galaxy S23.png', 103, 150, 899.99, false, 27);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (8, 'MacBook Pro', 'Portátil profesional de Apple', '/uploads/4d525696473b4d3ca83f0fd16dec27a7_MacBook Pro.jpg', 12, 50, 1999.99, false, 27);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (9, 'Dell XPS 13', 'Ultrabook de alta gama', '/uploads/1718576419714ec3b73895a97f569568_Dell XPS 13.jpg', 67, 70, 1299.99, false, 28);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (10, 'Lenovo ThinkPad X1', 'Laptop empresarial de alta calidad', '/uploads/4f6160148854467f8218eac0ff01850e_Lenovo ThinkPad X1.png', 9, 80, 1399.99, false, 28);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (11, 'Apple Watch Series 8', 'Reloj inteligente de Apple', '/uploads/b45c80119b4c47be8f758c0829b4b445_Apple Watch Series 8.png', 9, 200, 399.99, false, 29);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (12, 'Samsung Galaxy Watch 5', 'Reloj inteligente con Android', '/uploads/c08c363c5ab44a82a6ae18448bd76b6e_Samsung Galaxy Watch 5.jpg', 110, 250, 299.99, false, 29);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (13, 'Sony WH-1000XM5', 'Auriculares con cancelación de ruido', '/uploads/e130e5bdef914fbdbd7cee6cddb08331_Sony WH-1000XM5.jpg', 138, 300, 349.99, false, 30);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (14, 'Bose QuietComfort 45', 'Auriculares inalámbricos de calidad', '/uploads/799a5695e9fe4875a7a0b4d63d89ae0d_Bose QuietComfort 45.png', 200, 200, 329.99, false, 30);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (15, 'GoPro HERO11', 'Cámara de acción resistente', '/uploads/2a29e0cfcd9e417eb6dbd294f370e04c_GoPro HERO11.png', 217, 400, 399.99, false, 31);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (16, 'DJI Mini 3 Pro', 'Drone con cámara 4K', '/uploads/5bb43373d85b496a807e0c8b0f3c9ec7_DJI Mini 3 Pro.jpg', 27, 100, 749.99, false, 31);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (17, 'Kindle Paperwhite', 'Lector de libros electrónicos', '/uploads/dfe5ae8374864af38150b69f45bd740f_Kindle Paperwhite.jpg', 395, 500, 129.99, false, 32);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (18, 'Amazon Echo Dot', 'Altavoz inteligente con Alexa', '/uploads/efa5a5382f78489f8f1914bf6ad05fda_Amazon Echo Dot.jpg', 705, 800, 49.99, false, 32);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (19, 'Google Nest Hub', 'Pantalla inteligente con Google Assistant', '/uploads/5a7a2015a0bb480f92de11258304cd59_Google Nest Hub.png', 283, 300, 99.99, false, 33);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (20, 'Logitech MX Master 3', 'Ratón inalámbrico avanzado', '/uploads/15de963fc61140c7a729955f9927aef2_Logitech MX Master 3.png', 4, 400, 99.99, false, 33);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (21, 'Corsair K95 RGB', 'Teclado mecánico para gaming', '/uploads/b488fa3754584069b1862a8188cd869d_Corsair K95 RGB.png', 36, 150, 199.99, false, 34);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (22, 'Razer DeathAdder V3', 'Ratón para gaming de alta precisión', '/uploads/6db19a58975e4a73a0c28a0161173f6d_Razer DeathAdder V3.png', 224, 250, 69.99, false, 34);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (23, 'MSI Optix MAG271CQR', 'Monitor curvo para gaming', '/uploads/fef6aeb8ea3440db91a3f6444041e8e2_MSI Optix MAG271CQR.jpg', 56, 100, 349.99, false, 35);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (24, 'Asus ROG Swift PG259QNR', 'Monitor de gaming de 360Hz', '/uploads/af4c90c8974a4e828d22454b8450a552_Asus ROG Swift PG259QNR.png', 47, 50, 699.99, false, 35);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (25, 'HyperX Cloud Alpha', 'Auriculares para gaming', '/uploads/21b7647ebbb14afaa2d9ed5db933cabc_HyperX Cloud Alpha.png', 168, 300, 99.99, false, 36);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (26, 'Acer Predator Helios 300', 'Laptop para gaming', '/uploads/bc1b8dbd2ec24b7e936e648050ca926b_Acer Predator Helios 300.png', 19, 80, 1499.99, false, 36);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (27, 'NVIDIA GeForce RTX 4090', 'Tarjeta gráfica de alto rendimiento', '/uploads/ade00df0e5c14af881eff588ba10b994_NVIDIA GeForce RTX 4090.png', 7, 20, 1599.99, false, 37);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (28, 'AMD Ryzen 9 7950X', 'Procesador de alta gama', '/uploads/7922f0a1ad904fb3aa2b77dcf875c4c0_AMD Ryzen 9 7950X.jpg', 55, 100, 699.99, false, 37);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (29, 'Intel Core i9-13900K', 'Procesador de última generación', '/uploads/b11d36f0b7704523a885a20693ebfa94_Intel Core i9-13900K.jpg', 119, 120, 749.99, false, 38);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (30, 'Samsung T7 Portable SSD', 'Disco SSD portátil', '/uploads/4905f062eb3c4811b9033bb0603d9cd0_Samsung T7 Portable SSD.png', 245, 300, 119.99, false, 38);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (31, 'WD Black SN850', 'SSD NVMe para gaming', '/uploads/4655174ced454c4c8f619a4d1995a4ac_WD Black SN850.jpg', 173, 250, 229.99, false, 38);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (32, 'Seagate IronWolf Pro', 'Disco duro para NAS', '/uploads/d1e1fcba70054b2d81751195666c8dcb_Seagate IronWolf Pro.png', 37, 200, 149.99, false, 38);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (33, 'Philips Hue Starter Kit', 'Kit de iluminación inteligente', '/uploads/2d3ffcffe2a94bbc8c48ad7e1d12da37_Philips Hue Starter Kit.jpg', 91, 150, 199.99, false, 24);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (34, 'Nanoleaf Shapes', 'Paneles de iluminación decorativa', '/uploads/75d308f5a16d41b79f087152f707ddf8_Nanoleaf Shapes.jpg', 3, 50, 179.99, false, 25);
+INSERT INTO products (id, name, description, image, sold, quantity, price, is_blocked, user_owner_id) VALUES (35, 'Theragun Elite', 'Pistola de masaje avanzada', '/uploads/7469462f8553483396bf413a4c0ada4c_Theragun Elite.jpg', 93, 100, 399.99, false, 36);
+
 
 -- Inyeccion de ShoppingCarts de prueba
 INSERT INTO shopping_cart (id, is_active, date, user_id) VALUES (1, false, '2024-12-19 16:30:45.000000', 1);

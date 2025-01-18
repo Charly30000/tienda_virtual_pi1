@@ -36,7 +36,7 @@ import com.tienda.virtual.backtiendavirtual.utils.UserUtils;
 public class ShoppingCartController {
 
     @Autowired
-    UserUtils userUtils;
+    private UserUtils userUtils;
 
     @Autowired
     ShoppingCartService shoppingCartService;
@@ -113,14 +113,16 @@ public class ShoppingCartController {
                 Integer totalAvailable = shoppingCartProduct.getProduct().getQuantity()
                         - shoppingCartProduct.getProduct().getSold();
                 if (totalAvailable - shoppingCartProduct.getQuantity() < 0
-                        || shoppingCartProduct.getProduct().isBlocked()) {
+                        || shoppingCartProduct.getProduct().isBlocked()
+                        || !shoppingCartProduct.getProduct().getUser().isEnabled()) {
                     ShoppingCartInvalidBuyResponse.InvalidProducts productLocked = new ShoppingCartInvalidBuyResponse.InvalidProducts(
                             shoppingCartProduct.getProduct().getId(),
                             shoppingCartProduct.getProduct().getName(),
                             shoppingCartProduct.getProduct().getUser().getUsername(),
                             shoppingCartProduct.getProduct().isBlocked(),
                             totalAvailable,
-                            shoppingCartProduct.getQuantity());
+                            shoppingCartProduct.getQuantity(),
+                            !shoppingCartProduct.getProduct().getUser().isEnabled());
                     lockedProducts.add(productLocked);
                 }
             }
@@ -128,7 +130,7 @@ public class ShoppingCartController {
             if (!lockedProducts.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(new ShoppingCartInvalidBuyResponse(
-                                "Algunos productos que intentas seleccionar están fuera de stock o no hay suficientes",
+                                "Algunos productos que intentas seleccionar están fuera de stock, no hay suficientes o su propietario se encuentra bloqueado",
                                 HttpStatus.CONFLICT,
                                 true, lockedProducts));
             }
