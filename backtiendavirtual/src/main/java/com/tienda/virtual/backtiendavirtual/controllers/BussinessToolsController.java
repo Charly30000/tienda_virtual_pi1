@@ -59,7 +59,7 @@ import jakarta.validation.Validator;
 public class BussinessToolsController {
 
     @Autowired
-    UserUtils userUtils;
+    private UserUtils userUtils;
 
     @Autowired
     private ProductService productService;

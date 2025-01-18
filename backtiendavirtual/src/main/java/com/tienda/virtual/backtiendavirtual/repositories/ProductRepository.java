@@ -28,4 +28,6 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     // Consulta para inicializar las etiquetas de un conjunto de productos
     @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.labels WHERE p IN :products")
     List<Product> fetchLabels(@Param("products") List<Product> products);
+
+    Page<Product> findByNameContainingIgnoreCase(@Param("name") String name, Pageable pageable);
 }
