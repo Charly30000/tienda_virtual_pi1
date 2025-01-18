@@ -1,4 +1,5 @@
 package com.tienda.virtual.backtiendavirtual.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tienda.virtual.backtiendavirtual.constants.ConstantsRoles;
@@ -29,6 +30,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @NotBlank
@@ -74,7 +76,7 @@ public class User {
     private List<ShoppingCart> shoppingCarts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({"user", "handler", "hibernateLazyInitializer"})
+    @JsonIgnore
     private List<Product> products;
 
     public User() {

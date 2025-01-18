@@ -1,0 +1,34 @@
+{
+    "LoginPage": {
+        "title": "¡Bienvenid@!",
+        "username": "Nombre de usuario",
+        "password": "Contraseña",
+        "button.login": "Iniciar sesión",
+        "link.register": "Crear cuenta",
+        "not.registered": "¿No estás registrado?",
+        "error.username": "El nombre de usuario es requerido",
+        "error.password": "La contraseña es requerida",
+        "error.invalidCredentials": "Credenciales inválidas"
+    },
+    "RegisterPage": {
+        "title": "¡Regístrate con nosotros!",
+        "username": "Nombre de usuario",
+        "password": "Contraseña",
+        "email": "E-mail",
+        "repeatPassword": "Repite la contraseña",
+        "button.register": "Registrarse",
+        "error.username": "Este campo es obligatorio",
+        "error.username.length": "El nombre de usuario debe de contener entre 3 y 50 caracteres",
+        "error.email.required": "Este campo es obligatorio",
+        "error.email.length": "El e-mail debe de contener entre 3 y 300 caracteres",
+        "error.email.invalid": "El formato del e-mail es inválido",
+        "error.password": "Este campo es obligatorio",
+        "error.password.length": "La contraseña debe de contener entre 8 y 60 caracteres",
+        "error.repeatPassword": "Las contraseñas no coinciden",
+        "error.registrationFailed": "El usuario que intentas crear ya existe",
+        "has.account": "¿Ya tienes una cuenta?",
+        "link.login": "Iniciar sesión",
+        "user.created1": "¡Usuario creado correctamente!",
+        "user.created2": "Vamos a redirigirte a la pagina de login"
+    }
+}
