@@ -65,7 +65,7 @@ const CartPage = () => {
         </div>
 
         {modalOpen && (
-          <div className="fixed top-0 w-full h-full bg-slate-50 z-50 flex flex-col items-center justify-center">
+          <div className="fixed top-0 w-full h-full  z-50 flex flex-col items-center justify-center">
             <div className="flex flex-col items-center justify-center gap-3 p-6 bg-white rounded-lg shadow-lg">
               <h2>¿Estas seguro de querer realizar esta compra?</h2>
               <div className="flex gap-3">

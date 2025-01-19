@@ -18,6 +18,14 @@ const BeforeCartPage = () => {
     setSiebarOpen(!sidebarOpen);
   };
 
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleAccordion = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+
+
   return (
     <div className="relative h-full">
       <Header toggleSidebar={toggleSidebar} />
@@ -27,32 +35,24 @@ const BeforeCartPage = () => {
 
         <div className="px-10 py-2 h-screen">
           <div className="w-full mt-3 h-1/2 flex flex-col gap-3">
-            <div className="w-full flex flex-col gap-2">
-              <div className="flex items-center border p-3 rounded-sm justify-end  gap-3">
-                <h3 className="w-3/6 text-center">Fecha de {date}  </h3>
+            <div className="w-100 flex flex-col gap-2">
+              <div className="w-full flex flex-col gap-2 border p-3 rounded-sm">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-center">Fecha de {date}</h3>
+                  <h4 className="text-center">Total de compra: 500</h4>
+                </div>
 
-                <h4 className="w-3/6 text-center">Total de compra</h4>
+                {isExpanded && <CartProduct />}
               </div>
 
-              <CartProduct />
-              <CartProduct />
-
-              <CartProduct />
+              <button
+                onClick={toggleAccordion}
+                type="button"
+                className="py-2 px-2 bg-blue-500 w-100 rounded-lg text-white">
+                {isExpanded ? "Contraer" : "Expandir"}
+              </button>
             </div>
 
-            <div className="w-full flex flex-col gap-2">
-              <div className="flex items-center border p-3 rounded-sm justify-end  gap-3">
-                <h3 className="w-3/6 text-center">Fecha de {date} </h3>
-
-                <h4 className="w-3/6 text-center">Total de compra</h4>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="w-full py-3 bg-blue-500 rounded-lg text-white">
-              Expandir
-            </button>
           </div>
         </div>
       </main>

@@ -3,8 +3,12 @@ import { Link } from "react-router-dom";
 
 const Card = () => {
   return (
-    <Link to='/product' className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
-      <div className="w-[300px] bg-black h-40  rounded-lg"></div>
+    <Link
+      to="/product"
+      className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
+      <div className=" rounded-lg">
+        <img src="src/assets/img/no-image.webp" alt="no image" />
+      </div>
 
       <h3>Play 1</h3>
 

@@ -1,7 +1,5 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
 import React from "react";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
@@ -30,6 +28,13 @@ const CompanyToolsPage = () => {
                 type="button"
                 className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
                 Crear nuevo producto
+              </button>
+
+              <button
+                id="filterPrice"
+                type="button"
+                className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
+                Modificar producto
               </button>
             </div>
           </div>
