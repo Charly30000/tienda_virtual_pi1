@@ -1,14 +1,20 @@
 import { API_CONFIG } from "@/config/ApiConfig";
 import { useServices } from "@/hooks/useServices";
 import { BussinessToolsService } from "@/services/BussinessTools/BussinessToolsService";
+import { CreateProductResponse } from "@/services/BussinessTools/Props/CreateProductResponse";
 import React, { useState } from "react";
 
 export const ExampleUpdateProduct = () => {
   /**
    * !IMPORTANTE
    * Cada peticion tendrá un useServices distinto
+   * Para tipar useServices y ponerle <CreateProductResponse>
+   * me baso en lo que me devuelve .updateProduct(...), normalmente devuelve Promise<CreateProductResponse>,
+   * asique le quitamos el Promise y se queda en CreateProductResponse
+   * De esta manera tienes la ayuda de Typescript para saber que dato recibes
    */
-  const { callService, errors, isLoading, data } = useServices();
+  const { callService, errors, isLoading, data } =
+    useServices<CreateProductResponse>();
   const shoppingCartService = new BussinessToolsService();
 
   const [selectedImage, setSelectedImage] = useState<File | undefined>(

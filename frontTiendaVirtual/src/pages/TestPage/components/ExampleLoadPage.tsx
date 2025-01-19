@@ -1,4 +1,5 @@
 import { useServices } from "@/hooks/useServices";
+import { HistoricShoppingCartResponse } from "@/services/ShoppingCart/Props/HistoricShoppingCartResponse";
 import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
 import React from "react";
 
@@ -6,8 +7,13 @@ export const ExampleLoadPage = () => {
   /**
    * !IMPORTANTE
    * Cada peticion tendrá un useServices distinto
+   * Para tipar useServices y ponerle <HistoricShoppingCartResponse>
+   * me baso en lo que me devuelve .historic(), normalmente devuelve Promise<HistoricShoppingCartResponse>,
+   * asique le quitamos el Promise y se queda en HistoricShoppingCartResponse
+   * De esta manera tienes la ayuda de Typescript para saber que dato recibes
    */
-  const { callService, errors, isLoading, data } = useServices();
+  const { callService, errors, isLoading, data } =
+    useServices<HistoricShoppingCartResponse>();
   const shoppingCartService = new ShoppingCartService();
 
   const callTestService = async () => {
