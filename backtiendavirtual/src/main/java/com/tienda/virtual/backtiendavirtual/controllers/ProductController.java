@@ -8,18 +8,17 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tienda.virtual.backtiendavirtual.constants.ConstantsRoles;
 import com.tienda.virtual.backtiendavirtual.entities.Product;
 import com.tienda.virtual.backtiendavirtual.services.ProductService;
-
-import jakarta.validation.Valid;
+import com.tienda.virtual.backtiendavirtual.services.UserService;
 
 @RestController
 @RequestMapping("/api/products")
@@ -28,11 +27,16 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * Endpoint para obtener la lista de todos los productos.
+     *
      * @return Lista de productos
      */
     @GetMapping
+    @Secured(ConstantsRoles.ROLE_BUSSINESS)
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.findAll();
         return ResponseEntity.ok(products);
@@ -40,10 +44,12 @@ public class ProductController {
 
     /**
      * Endpoint para obtener un producto por su ID.
+     *
      * @param id Identificador del producto
      * @return Producto encontrado o error 404
      */
     @GetMapping("/{id}")
+    @Secured(ConstantsRoles.ROLE_USER)
     public ResponseEntity<?> getProductById(@PathVariable Long id) {
         Optional<Product> product = productService.findById(id);
         if (product.isEmpty()) {
@@ -53,36 +59,18 @@ public class ProductController {
             response.put("status", 404);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.ok(product.get());
-    }
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", product.get().getId());
+        response.put("name", product.get().getName());
+        response.put("description", product.get().getDescription());
+        response.put("username", product.get().getUser().getUsername());
 
-    /**
-     * Endpoint para crear un nuevo producto.
-     * @param product Producto a crear
-     * @param result  Resultado de validación
-     * @return Producto creado o errores de validación
-     */
-    @PostMapping("/create")
-    public ResponseEntity<?> createProduct(@Valid @RequestBody Product product, BindingResult result) {
-        if (result.hasFieldErrors()) {
-            return validation(result);
-        }
-
-        Optional<Product> existingProduct = productService.findByName(product.getName());
-        if (existingProduct.isPresent()) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "El producto con este nombre ya existe.");
-            response.put("error", true);
-            response.put("status", 409);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-        }
-
-        Product newProduct = productService.save(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newProduct);
+        return ResponseEntity.ok(response);
     }
 
     /**
      * Método auxiliar para manejar errores de validación.
+     *
      * @param result Resultado de validación
      * @return Respuesta con errores
      */
