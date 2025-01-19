@@ -28,7 +28,7 @@ const AdminCartPerson = () => {
             <button
               type="button"
               className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
-              Eliminar 
+              Bloquear
             </button>
           </div>
         </div>

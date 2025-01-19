@@ -91,7 +91,11 @@ export const RegisterPage = () => {
   return (
     <div className="container mx-auto">
       <div className="flex justify-center items-center h-screen">
+
+
         <div className="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+          <img src="src/assets/img/logo.png" alt="logo" className="w-[150px] mb-5" />
+          
           <form className="space-y-6" onSubmit={handleSubmit}>
             <h5 className="text-xl font-medium text-gray-900 dark:text-white">
               {t("RegisterPage", "title")}

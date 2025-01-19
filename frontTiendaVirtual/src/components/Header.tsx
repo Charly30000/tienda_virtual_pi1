@@ -38,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         />
 
         <Link to="/" className="uppercase text-white px-3">
-          Logo
+          <img src="src/assets/img/logo.png" alt="logo" className="w-[50px] " />
         </Link>
 
         <Navbar products={products} onSearch={handleSearchResults} />
@@ -56,9 +56,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         <div className="bg-white p-4 rounded-md mt-4 shadow-lg max-h-[300px] overflow-y-auto">
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
-              <div key={product.id} className="py-2">
-                {product.name}
-              </div>
+              <Link to="/">
+                <div key={product.id} className="py-2">
+                  {product.name}
+                </div>
+              </Link>
             ))
           ) : (
             <p>Producto no encontrados</p>

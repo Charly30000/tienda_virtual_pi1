@@ -6,9 +6,15 @@ import React from "react";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Card from "@/components/Card";
+import useAuthRedirect from "@/hooks/useAuthRedirect"; // Import the hook
 
 const HomePage = () => {
   const [sidebarOpen, setSiebarOpen] = useState(false);
+
+  const isAuthenticated = true; // Replace with your authentication logic
+
+  // Call the hook to redirect if not authenticated
+  useAuthRedirect(isAuthenticated);
 
   const toggleSidebar = () => {
     setSiebarOpen(!sidebarOpen);
