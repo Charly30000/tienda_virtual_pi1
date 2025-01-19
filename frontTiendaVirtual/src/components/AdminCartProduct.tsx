@@ -9,7 +9,7 @@ const AdminCartProduct = () => {
   return (
     <div className="flex mt-5 items-center border p-3 rounded-sm justify-between gap-3">
       <div className="w-3/4 flex items-center">
-        <div className="w-1/6 bg-black h-14"></div>
+      <img src="src/assets/img/no-image.webp" alt="no image" className="h-14" />
 
         <h3 className=" px-10">{product.name}</h3>
 
@@ -25,7 +25,7 @@ const AdminCartProduct = () => {
         <button
           type="button"
           className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
-          Eliminar producto
+          Bloquear producto
         </button>
       </div>
     </div>

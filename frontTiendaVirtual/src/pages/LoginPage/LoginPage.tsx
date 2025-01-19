@@ -83,6 +83,12 @@ export const LoginPage = () => {
     <div className="container mx-auto">
       <div className="flex justify-center items-center h-screen">
         <div className="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+          <img
+            src="src/assets/img/logo.png"
+            alt="logo"
+            className="w-[150px] mb-5"
+          />
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <h5 className="text-xl font-medium text-gray-900 dark:text-white">
               {t("LoginPage", "title")}
@@ -90,8 +96,7 @@ export const LoginPage = () => {
             <div>
               <label
                 htmlFor="username"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {t("LoginPage", "username")}
               </label>
               <input
@@ -115,8 +120,7 @@ export const LoginPage = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {t("LoginPage", "password")}
               </label>
               <input
@@ -150,16 +154,14 @@ export const LoginPage = () => {
                 isSubmitting
                   ? "opacity-50 cursor-not-allowed"
                   : "dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              }`}
-            >
+              }`}>
               {t("LoginPage", "button.login")}
             </button>
             <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
               {t("LoginPage", "not.registered")}&nbsp;
               <button
                 onClick={handleRegisterNavigation}
-                className="text-blue-700 hover:underline dark:text-blue-500 linkButton"
-              >
+                className="text-blue-700 hover:underline dark:text-blue-500 linkButton">
                 {t("LoginPage", "link.register")}
               </button>
             </div>

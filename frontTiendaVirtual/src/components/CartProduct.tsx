@@ -27,7 +27,7 @@ const CartProduct = () => {
 
   return (
     <div className="flex items-center border p-3 rounded-sm justify-end gap-3">
-      <div className="w-1/6 bg-black h-14"></div>
+       <img src="src/assets/img/no-image.webp" alt="no image" className="h-40" />
 
       <h3 className="w-2/6">{product.name}</h3>
 
