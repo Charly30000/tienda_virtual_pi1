@@ -18,6 +18,11 @@ export class AuthService {
     });
   }
 
+  /**
+   * Realizamos solicitud para realizar login
+   * @param param0 
+   * @returns 
+   */
   async login({ username, password }: LoginRequest): Promise<LoginResponse> {
     try {
       const response = await this.apiInstance.post("/login", {
@@ -30,6 +35,11 @@ export class AuthService {
     }
   }
 
+  /**
+   * Realizamos peticion para hacer el register
+   * @param param0 
+   * @returns 
+   */
   async register({
     username,
     password,

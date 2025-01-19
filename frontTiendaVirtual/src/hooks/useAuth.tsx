@@ -1,4 +1,4 @@
-import { LoginResponse } from "@/services/auth/Props/Login";
+import { LoginResponse } from "@/services/Auth/Props/Login";
 import { useAuthStore } from "@/store/authStore";
 
 /**

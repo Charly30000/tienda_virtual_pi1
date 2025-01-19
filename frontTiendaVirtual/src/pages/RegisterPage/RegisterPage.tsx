@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "./RegisterPage.scss";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useForm } from "@/hooks/useForm";
-import { AuthService } from "@/services/auth/AuthService";
-import { RegisterRequest } from "@/services/auth/Props/Register";
+import { AuthService } from "@/services/Auth/AuthService";
+import { RegisterRequest } from "@/services/Auth/Props/Register";
 import { useNavigate } from "react-router-dom";
 import { ErrorsForm, RegisterForm } from "./Props/FormProps";
 
