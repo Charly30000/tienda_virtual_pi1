@@ -5,6 +5,7 @@ import { GetProducts } from "./Props/GetProducts";
 import { GenericResponse } from "../GenericResponse";
 import { CreateProductResponse } from "./Props/CreateProductResponse";
 import { CreateProductRequest } from "./Props/CreateProductRequest";
+import { Categories } from "./Props/CategoriesResponse";
 
 /**
  * Manejo del servicio de las herramientas empresariales
@@ -24,15 +25,15 @@ export class BussinessToolsService {
 
   /**
    * Obtenemos un listado de productos del usuario que realiza la peticion de manera paginada
-   * @param page 
-   * @returns 
+   * @param page
+   * @returns
    */
   async getProducts(page: number): Promise<GetProducts> {
     try {
       const response = await this.apiInstance.get("/products", {
         params: {
-            page: page
-        }
+          page: page,
+        },
       });
       return response.data;
     } catch (error) {
@@ -52,8 +53,8 @@ export class BussinessToolsService {
 
   /**
    * El usuario bloquea un producto propiamente de él
-   * @param id 
-   * @returns 
+   * @param id
+   * @returns
    */
   async blockProduct(id: number): Promise<GetProducts> {
     try {
@@ -76,7 +77,7 @@ export class BussinessToolsService {
 
   /**
    * El usuario crea un producto nuevo
-   * @param id 
+   * @param id
    * @throws GenericResponse, ProductError
    */
   async createProduct(
@@ -90,7 +91,7 @@ export class BussinessToolsService {
       formData.append("product", JSON.stringify(product));
       if (image) {
         // Agregamos la imagen si está disponible
-        formData.append("image", image); 
+        formData.append("image", image);
       }
 
       const response = await this.apiInstance.post("/create", formData, {
@@ -117,7 +118,7 @@ export class BussinessToolsService {
 
   /**
    * El usuario actualiza un producto existente
-   * @param id 
+   * @param id
    * @throws GenericResponse, ProductError
    */
   async updateProduct(
@@ -132,7 +133,7 @@ export class BussinessToolsService {
       formData.append("product", JSON.stringify(product));
       if (image) {
         // Agregamos la imagen si está disponible
-        formData.append("image", image); 
+        formData.append("image", image);
       }
 
       const response = await this.apiInstance.put(`/update/${id}`, formData, {
@@ -157,4 +158,52 @@ export class BussinessToolsService {
     }
   }
 
+  /**
+   * Obtenemos un listado de todas las Categorias
+   * @returns
+   */
+  async getCategories(): Promise<Categories> {
+    try {
+      const response = await this.apiInstance.get("/getAll", {
+        baseURL: API_CONFIG.BASE_URL + "/api/categories",
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const genericResponse: GenericResponse = error.response.data;
+        throw genericResponse;
+      } else {
+        console.error("Unknown error:", error);
+        throw {
+          message: "An unexpected error occurred",
+          status: 500,
+          error: true,
+        } as GenericResponse;
+      }
+    }
+  }
+  /**
+   * Obtenemos un listado de todas las Labels
+   * @returns
+   */
+  async getLabels(): Promise<Categories> {
+    try {
+      const response = await this.apiInstance.get("/getAll", {
+        baseURL: API_CONFIG.BASE_URL + "/api/labels",
+      });
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const genericResponse: GenericResponse = error.response.data;
+        throw genericResponse;
+      } else {
+        console.error("Unknown error:", error);
+        throw {
+          message: "An unexpected error occurred",
+          status: 500,
+          error: true,
+        } as GenericResponse;
+      }
+    }
+  }
 }
