@@ -1,4 +1,5 @@
 package com.tienda.virtual.backtiendavirtual.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tienda.virtual.backtiendavirtual.constants.ConstantsRoles;
@@ -29,6 +30,7 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
     @NotBlank
@@ -74,7 +76,7 @@ public class User {
     private List<ShoppingCart> shoppingCarts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties({"user", "handler", "hibernateLazyInitializer"})
+    @JsonIgnore
     private List<Product> products;
 
     public User() {
@@ -176,6 +178,13 @@ public class User {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public void populateTransientFields() {
+        boolean hasRoleAdmin = roles != null && roles.stream().anyMatch(role -> ConstantsRoles.ROLE_ADMIN.equals(role.getName()));
+        boolean hasRoleBussiness = roles != null && roles.stream().anyMatch(role -> ConstantsRoles.ROLE_BUSSINESS.equals(role.getName()));
+        setIsAdmin(hasRoleAdmin);
+        setIsBussiness(hasRoleBussiness);
     }
 
     @PrePersist

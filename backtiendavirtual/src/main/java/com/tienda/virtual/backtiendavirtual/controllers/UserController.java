@@ -64,7 +64,13 @@ public class UserController {
         List<Role> roles = new ArrayList<>();
         roles.add(new Role(ConstantsRoles.ROLE_USER));
         User newUser = new User(user.getUsername(), user.getEmail(), user.getPassword(), true, roles);
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(newUser));
+        service.save(newUser);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Usuario creado");
+        response.put("error", false);
+        response.put("status", HttpStatus.CREATED.value());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     private ResponseEntity<?> validation(BindingResult result) {

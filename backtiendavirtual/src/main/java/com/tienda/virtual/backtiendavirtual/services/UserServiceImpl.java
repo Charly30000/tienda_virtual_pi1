@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,17 +48,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+        Optional<User> user = userRepository.findById(id);
+        user.ifPresent(User::populateTransientFields);
+        return user;
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
+        user.ifPresent(User::populateTransientFields);
+        return user;
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email);
+        user.ifPresent(User::populateTransientFields);
+        return user;
+    }
+
+    @Override
+    public Page<User> findByUsernamePageable(String username, Pageable pageable) {
+        return userRepository.findByUsernameContainingIgnoreCase(username, pageable);
+    }
+
+    @Override
+    public User updateRoles(User user, List<Role> roles) {
+        User userDB = userRepository.findByUsername(user.getUsername()).orElseThrow();
+        userDB.setRoles(roles);
+        return userRepository.save(user);
     }
 
 }
