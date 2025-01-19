@@ -27,4 +27,10 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> findAllById(List<Long> ids) {
         return (List<Category>) categoryRespository.findAllById(ids);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Category> findAll() {
+        return (List<Category>) categoryRespository.findAllByOrderByNameAsc();
+    }
 }

@@ -7,5 +7,8 @@ import com.tienda.virtual.backtiendavirtual.entities.Category;
 
 public interface CategoryService {
     Optional<Category> findById(Long id);
+
     List<Category> findAllById(List<Long> ids);
+
+    List<Category> findAll();
 }
