@@ -28,4 +28,10 @@ public class LabelServiceImpl implements LabelService {
         return (List<Label>) labelRepository.findAllById(ids);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Label> findAll() {
+        return (List<Label>) labelRepository.findAllByOrderByNameAsc();
+    }
+
 }

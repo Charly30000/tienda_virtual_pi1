@@ -454,7 +454,7 @@ public class BussinessToolsController {
                 return ResponseMessagesUtils.notFound("El producto que intentas actualizar no existe");
             }
             if (!productDB.get().getUser().equals(user)) {
-                return ResponseMessagesUtils.notFound("El producto que intentas actualizar no existe");
+                return ResponseMessagesUtils.notFound("El producto que intentas actualizar no te pertenece");
             }
 
             Product blockedProduct = productDB.get();

@@ -58,7 +58,7 @@ public class AdminToolsController {
     private RoleService roleService;
 
     @GetMapping("/users")
-    @Secured(ConstantsRoles.ROLE_BUSSINESS)
+    @Secured(ConstantsRoles.ROLE_ADMIN)
     public ResponseEntity<?> getUsersPaginate(@Valid @ModelAttribute AdminToolsGetUsersQueryParamsRequest queryParams,
             BindingResult bindingResult) {
         try {
@@ -115,14 +115,14 @@ public class AdminToolsController {
     }
 
     @DeleteMapping("/users/{username}")
-    @Secured(ConstantsRoles.ROLE_BUSSINESS)
+    @Secured(ConstantsRoles.ROLE_ADMIN)
     public ResponseEntity<?> updateUserBlocked(@PathVariable String username) {
         try {
             User user = userUtils.getUserAuthenticated();
 
             Optional<User> userdb = userService.findByUsername(username);
             if (!userdb.isPresent()) {
-                ResponseMessagesUtils.notFound("El usuario que intentas bloquear no existe");
+                return ResponseMessagesUtils.notFound("El usuario que intentas bloquear no existe");
             }
             User userBlocked = userdb.get();
             userBlocked.setEnabled(!userBlocked.isEnabled());
@@ -148,7 +148,7 @@ public class AdminToolsController {
     }
 
     @GetMapping("/products")
-    @Secured(ConstantsRoles.ROLE_BUSSINESS)
+    @Secured(ConstantsRoles.ROLE_ADMIN)
     public ResponseEntity<?> getProductsPaginate(
             @Valid @ModelAttribute AdminToolsProductsQueryParamsRequest queryParams,
             BindingResult bindingResult) {
@@ -212,7 +212,7 @@ public class AdminToolsController {
     }
 
     @DeleteMapping("/product/{id}")
-    @Secured(ConstantsRoles.ROLE_BUSSINESS)
+    @Secured(ConstantsRoles.ROLE_ADMIN)
     public ResponseEntity<?> blockProduct(@PathVariable Long id) {
         try {
             User user = userUtils.getUserAuthenticated();
@@ -222,10 +222,13 @@ public class AdminToolsController {
                 return ResponseMessagesUtils.notFound("El producto que intentas bloquear no existe");
             }
             Product product = productDB.get();
-            product.setBlocked(true);
+            product.setBlocked(!product.isBlocked());
             productService.save(product);
 
-            return ResponseMessagesUtils.ok("Producto bloqueado correctamente");
+            String responseMessage = product.isBlocked() ? "Producto bloqueado correctamente"
+                    : "Producto desbloqueado correctamente";
+
+            return ResponseMessagesUtils.ok(responseMessage);
         } catch (UserBlockedException e) {
             e.printStackTrace();
             return ResponseMessagesUtils.userBlocked();
@@ -242,6 +245,7 @@ public class AdminToolsController {
     }
 
     @PutMapping("/users/update/bussiness/{username}")
+    @Secured(ConstantsRoles.ROLE_ADMIN)
     public ResponseEntity<?> updateUserToBussiness(@PathVariable String username) {
         try {
             User user = userUtils.getUserAuthenticated();
