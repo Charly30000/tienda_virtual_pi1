@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import React from "react";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import { useTranslate } from "@/hooks/useTranslate";
 
 const ProductPage = () => {
   const [sidebarOpen, setSiebarOpen] = useState(false);
@@ -10,6 +11,8 @@ const ProductPage = () => {
   const toggleSidebar = () => {
     setSiebarOpen(!sidebarOpen);
   };
+
+  const t = useTranslate();
 
   return (
     <div>
@@ -21,14 +24,9 @@ const ProductPage = () => {
         <div className="px-10 py-2 h-screen">
           <div className="w-full mt-3 h-1/2 flex  justify-between gap-3">
             <div className="w-1/3 h-3/4">
+              <p>ID: 123456</p>
 
-              <p>
-                ID: 123456
-              </p>
-
-              <div className=" bg-black h-full">
-                <p className="text-white">Imagen</p>
-              </div>
+              <img src="src/assets/img/no-image.webp" alt="no image" />
             </div>
 
             <div className="w-1/3 flex flex-col items-center justify-center shadow-lg bg-blue-50 rounded-lg py-2 text-center gap-3">
@@ -57,7 +55,7 @@ const ProductPage = () => {
               <button
                 type="button"
                 className="bg-blue-500 py-2 px-5 text-white rounded-lg">
-                Añadir
+                {t("product", "add")}
               </button>
 
               <p>Vendido por nosotros</p>

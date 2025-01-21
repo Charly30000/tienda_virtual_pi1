@@ -36,12 +36,7 @@ const AdminPersonToolsPage = () => {
                 />
               </div>
 
-              <input
-                type="text"
-                id="person-product"
-                placeholder="Buscar nombre "
-                className="p-2 w-full  border-blue-200 border rounded-lg"
-              />
+             
             </div>
 
             <div>

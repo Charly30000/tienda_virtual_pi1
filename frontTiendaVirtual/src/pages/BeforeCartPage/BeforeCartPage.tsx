@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import React, { useEffect, useState } from "react";
+import { useTranslate } from "@/hooks/useTranslate";
 
 const BeforeCartPage = () => {
   const [sidebarOpen, setSiebarOpen] = useState(false);
@@ -24,7 +25,7 @@ const BeforeCartPage = () => {
     setIsExpanded(!isExpanded);
   };
 
-
+  const t = useTranslate();
 
   return (
     <div className="relative h-full">
@@ -38,8 +39,10 @@ const BeforeCartPage = () => {
             <div className="w-100 flex flex-col gap-2">
               <div className="w-full flex flex-col gap-2 border p-3 rounded-sm">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-center">Fecha de {date}</h3>
-                  <h4 className="text-center">Total de compra: 500</h4>
+                  <h3 className="text-center">
+                    {t("beforeCart", "date")} {date}
+                  </h3>
+                  <h4 className="text-center">  {t("beforeCart", "total")}</h4>
                 </div>
 
                 {isExpanded && <CartProduct />}
@@ -52,7 +55,6 @@ const BeforeCartPage = () => {
                 {isExpanded ? "Contraer" : "Expandir"}
               </button>
             </div>
-
           </div>
         </div>
       </main>

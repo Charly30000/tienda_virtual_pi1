@@ -39,7 +39,6 @@ const AdminProductsToolsPage = () => {
         <div className="px-10 py-2 h-screen">
           <div className="w-full mt-3 h-1/2">
             <div className="flex gap-6">
-              {/* Input for searching people */}
               <div className="flex flex-col gap-2 w-1/2">
                 <input
                   type="text"
@@ -66,7 +65,6 @@ const AdminProductsToolsPage = () => {
                 )}
               </div>
 
-              {/* Input for searching products */}
               <div className="flex flex-col gap-2 w-1/2">
                 <input
                   type="text"
@@ -94,7 +92,6 @@ const AdminProductsToolsPage = () => {
               </div>
             </div>
 
-            {/* Hidden AdminCartProduct content */}
             <div >
               <AdminCartProduct />
               <AdminCartProduct />
