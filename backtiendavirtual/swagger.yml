@@ -1,0 +1,1350 @@
+openapi: 3.0.3
+info:
+  title: Tienda Virtual API
+  description: |
+    Documentación de la API para la tienda virtual.
+    Incluye endpoints para autenticación, gestión de productos, usuarios, carrito de compras y más.
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor local por defecto
+
+tags:
+  - name: Auth
+    description: Autenticación (login) y registro de usuarios
+  - name: Products
+    description: Operaciones públicas de productos (consulta)
+  - name: ShoppingCart
+    description: Operaciones del carrito de compras
+  - name: BussinessTools
+    description: Operaciones para usuarios de tipo negocio (solo rol BUSSINESS)
+  - name: AdminTools
+    description: Operaciones de administración (solo rol ADMIN)
+  - name: Labels
+    description: Operaciones relacionadas con etiquetas (solo rol BUSSINESS)
+  - name: Categories
+    description: Operaciones relacionadas con categorías (solo rol BUSSINESS)
+  - name: Uploads
+    description: Rutas para servir ficheros subidos (imágenes)
+
+paths:
+
+  ###########################################################################
+  #                                AUTH
+  ###########################################################################
+  /login:
+    post:
+      tags:
+        - Auth
+      summary: Inicia sesión de usuario (login)
+      operationId: userLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Respuesta exitosa; se retorna el token y roles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid username or password"
+                  error:
+                    type: string
+                    example: "org.springframework.security.core.AuthenticationException"
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/users/create/user:
+    post:
+      tags:
+        - Auth
+      summary: Registra un nuevo usuario (signup)
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '201':
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+              examples:
+                userCreated:
+                  summary: Ejemplo de creación exitosa
+                  value:
+                    message: "Usuario creado"
+                    status: 201
+                    error: false
+        '400':
+          description: Error de validación de campos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorsResponse'
+              examples:
+                validationError:
+                  summary: Ejemplo de error de validación
+                  value:
+                    message: "Errores de validación en la solicitud"
+                    status: 400
+                    error: true
+                    errors:
+                      username: "El campo username no puede estar vacío"
+        '409':
+          description: Usuario o email ya existente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+              examples:
+                userConflict:
+                  summary: Conflicto al crear el usuario
+                  value:
+                    message: "El email que intentas introducir ya existe"
+                    status: 409
+                    error: true
+
+  ###########################################################################
+  #                              PRODUCTS
+  ###########################################################################
+  /api/products:
+    get:
+      tags:
+        - Products
+      summary: Obtiene todos los productos (operación pública)
+      operationId: getAllProducts
+      responses:
+        '200':
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+    post:
+      tags:
+        - Products
+      summary: Crea un producto (ejemplo de endpoint público, si así lo configuras)
+      operationId: createProductPublic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Producto creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorsResponse'
+        '409':
+          description: Conflicto (producto ya existe)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Obtiene un producto por ID
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Retorna el producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+
+  ###########################################################################
+  #                           SHOPPINGCART
+  ###########################################################################
+  /api/shoppingCart:
+    get:
+      tags:
+        - ShoppingCart
+      summary: Obtiene la cesta de la compra activa del usuario
+      operationId: getShoppingCart
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Carrito retornado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCartResponse'
+        '404':
+          description: No se encontró la cesta de compra
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: No autorizado/bloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/shoppingCart/buy:
+    get:
+      tags:
+        - ShoppingCart
+      summary: Realiza la compra del carrito activo
+      operationId: buyShoppingCart
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Compra realizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '409':
+          description: Productos inválidos (fuera de stock, bloqueados, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShoppingCartInvalidBuyResponse'
+        '406':
+          description: No hay productos seleccionados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: No autorizado/bloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/shoppingCart/addProduct/{id}:
+    get:
+      tags:
+        - ShoppingCart
+      summary: Añade una unidad de un producto al carrito
+      operationId: addProductToShoppingCart
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID del producto
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto añadido al carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: No autorizado/bloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '406':
+          description: No hay stock suficiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/shoppingCart/removeProduct/{id}:
+    delete:
+      tags:
+        - ShoppingCart
+      summary: Elimina un producto del carrito
+      operationId: removeProductFromShoppingCart
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Eliminado del carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: No autorizado/bloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/shoppingCart/updateProduct/{id}:
+    put:
+      tags:
+        - ShoppingCart
+      summary: Actualiza la cantidad de un producto en el carrito
+      operationId: updateQuantityProduct
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID del producto
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  description: Nueva cantidad (>=1)
+      responses:
+        '200':
+          description: Cantidad actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: No autorizado/bloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: Producto o carrito no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '406':
+          description: No hay suficiente stock
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/shoppingCart/historic:
+    get:
+      tags:
+        - ShoppingCart
+      summary: Obtiene el histórico de compras/cestas del usuario
+      operationId: getHistoricalShoppingCart
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de compras
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShoppingCartResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+
+  ###########################################################################
+  #                          BUSSINESSTOOLS
+  ###########################################################################
+  /api/bussinessTools/products:
+    get:
+      tags:
+        - BussinessTools
+      summary: Obtiene los productos del usuario negocio autenticado (paginados)
+      operationId: getBussinessProducts
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Número de página
+          required: false
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Lista de productos del usuario tipo negocio
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pages:
+                    type: object
+                    properties:
+                      totalPages:
+                        type: integer
+                      actualPage:
+                        type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BussinessProductResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/bussinessTools/create:
+    post:
+      tags:
+        - BussinessTools
+      summary: Crea un producto nuevo asociado al usuario negocio autenticado
+      operationId: createProductBussiness
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: string
+                  description: JSON serializado de ProductRequest
+                  example: |
+                    {
+                      "name": "string",
+                      "description": "string",
+                      "price": 1.99,
+                      "quantity": 10,
+                      "categories": [
+                        {"id": 1, "name": "string"},
+                        {"id": 2, "name": "string"}
+                      ],
+                      "labels": [
+                        {"id": 1, "name": "string"},
+                        {"id": 2, "name": "string"}
+                      ]
+                    }
+                image:
+                  type: string
+                  format: binary
+                  description: Imagen del producto (opcional)
+      responses:
+        '201':
+          description: Producto creado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Error de validación (campos del producto o imagen)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorsResponse'
+                  - $ref: '#/components/schemas/ProductInvalidCategoryLabelResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/bussinessTools/update/{id}:
+    put:
+      tags:
+        - BussinessTools
+      summary: Actualiza un producto del usuario negocio autenticado
+      operationId: updateProductBussiness
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto a actualizar
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: string
+                  description: JSON serializado de ProductRequest
+                  example: |
+                    {
+                      "name": "string",
+                      "description": "string",
+                      "price": 1.99,
+                      "quantity": 10,
+                      "categories": [
+                        {"id": 1, "name": "string"},
+                        {"id": 2, "name": "string"}
+                      ],
+                      "labels": [
+                        {"id": 1, "name": "string"},
+                        {"id": 2, "name": "string"}
+                      ]
+                    }
+                image:
+                  type: string
+                  format: binary
+                  description: Imagen del producto (opcional)
+      responses:
+        '201':
+          description: Producto actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorsResponse'
+                  - $ref: '#/components/schemas/ProductInvalidCategoryLabelResponse'
+        '401':
+          description: No autorizado o bloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: Producto no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '423':
+          description: Producto bloqueado (HTTP 423 = LOCKED)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/bussinessTools/delete/product/{id}:
+    delete:
+      tags:
+        - BussinessTools
+      summary: Bloquea (soft-delete) un producto del usuario negocio
+      operationId: blockProductBussiness
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID del producto
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto bloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+
+  ###########################################################################
+  #                             ADMINTOOLS
+  ###########################################################################
+  /api/adminTools/products:
+    get:
+      tags:
+        - AdminTools
+      summary: Obtiene la lista de productos paginada (solo ADMIN)
+      operationId: getProductsPaginate
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Número de página
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: name
+          in: query
+          description: Filtro por nombre de producto (máx. 50 caracteres)
+          required: false
+          schema:
+            type: string
+            maxLength: 50
+      responses:
+        '200':
+          description: Lista de productos paginada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pages:
+                    type: object
+                    properties:
+                      totalPages:
+                        type: integer
+                      actualPage:
+                        type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductResponse'
+        '400':
+          description: Error de validación de parámetros
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorsResponse'
+        '401':
+          description: Usuario bloqueado o no autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/adminTools/users:
+    get:
+      tags:
+        - AdminTools
+      summary: Obtiene la lista de usuarios paginada (solo ADMIN)
+      operationId: getUsersPaginate
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Número de página (1 por defecto)
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: username
+          in: query
+          description: Filtro por nombre de usuario (máx. 50 caracteres)
+          required: false
+          schema:
+            type: string
+            maxLength: 50
+      responses:
+        '200':
+          description: Lista de usuarios paginada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pages:
+                    type: object
+                    properties:
+                      totalPages:
+                        type: integer
+                      actualPage:
+                        type: integer
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AdminToolsTypeUserResponse'
+        '400':
+          description: Error de validación en parámetros
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorsResponse'
+        '401':
+          description: Usuario bloqueado o no autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/adminTools/users/{username}:
+    delete:
+      tags:
+        - AdminTools
+      summary: Bloquea o desbloquea un usuario (solo ADMIN)
+      operationId: updateUserBlocked
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Nombre de usuario que se desea bloquear/desbloquear
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operación exitosa (Usuario bloqueado o desbloqueado)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: Usuario bloqueado o no autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/adminTools/product/{id}:
+    delete:
+      tags:
+        - AdminTools
+      summary: Bloquea o desbloquea un producto (solo ADMIN)
+      operationId: blockProductAdmin
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto a bloquear/desbloquear
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Producto bloqueado o desbloqueado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: No encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  /api/adminTools/users/update/bussiness/{username}:
+    put:
+      tags:
+        - AdminTools
+      summary: Añade o quita el rol de negocio a un usuario (solo ADMIN)
+      operationId: updateUserToBussiness
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username al que se le agregará o quitará el rol
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Actualización correcta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '401':
+          description: Usuario bloqueado o no autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '404':
+          description: Usuario no encontrado o rol no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+
+  ###########################################################################
+  #                                LABELS
+  ###########################################################################
+  /api/labels/getAll:
+    get:
+      tags:
+        - Labels
+      summary: Obtiene la lista de todas las etiquetas (rol BUSSINESS)
+      operationId: getAllLabels
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de etiquetas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LabelSimpleResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+
+  ###########################################################################
+  #                              CATEGORIES
+  ###########################################################################
+  /api/categories/getAll:
+    get:
+      tags:
+        - Categories
+      summary: Obtiene la lista de todas las categorías (rol BUSSINESS)
+      operationId: getAllCategories
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategorySimpleResponse'
+        '401':
+          description: No autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
+  ###########################################################################
+  #                              UPLOADS
+  ###########################################################################
+  /uploads/{imagen}:
+    get:
+      tags:
+        - Uploads
+      summary: Descarga/visualiza una imagen almacenada en el servidor
+      operationId: getUploadedImage
+      parameters:
+        - name: imagen
+          in: path
+          required: true
+          description: Nombre del archivo de imagen
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Imagen devuelta correctamente
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+
+###############################################################################
+#                             COMPONENTS
+###############################################################################
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+
+    ####################################################
+    #               AUTH (LOGIN/REGISTER)
+    ####################################################
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        username:
+          type: string
+        isUser:
+          type: boolean
+        isBussiness:
+          type: boolean
+        isAdmin:
+          type: boolean
+      example:
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        username: "user1"
+        isUser: true
+        isBussiness: false
+        isAdmin: false
+
+    ####################################################
+    #       MODELO USADO EN /api/users/create/user
+    ####################################################
+    UserCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - username
+        - email
+        - password
+
+    ####################################################
+    #        RESPUESTAS / ERRORES GENÉRICOS
+    ####################################################
+    GenericResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        status:
+          type: integer
+        error:
+          type: boolean
+
+    ValidationErrorsResponse:
+      allOf:
+        - $ref: '#/components/schemas/GenericResponse'
+        - type: object
+          properties:
+            errors:
+              type: object
+              additionalProperties:
+                type: string
+          example:
+            message: "Errores de validación en la solicitud"
+            status: 400
+            error: true
+            errors:
+              fieldName: "Mensaje de error concreto"
+
+    ####################################################
+    #        RESPUESTAS / MODELOS ESPECÍFICOS
+    ####################################################
+    ProductInvalidCategoryLabelResponse:
+      allOf:
+        - $ref: '#/components/schemas/GenericResponse'
+        - type: object
+          properties:
+            categories:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+            labels:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+          example:
+            message: "Algunas categorías o etiquetas no existen"
+            status: 400
+            error: true
+            categories: []
+            labels: []
+
+    ShoppingCartInvalidBuyResponse:
+      allOf:
+        - $ref: '#/components/schemas/GenericResponse'
+        - type: object
+          properties:
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  productOwner:
+                    type: string
+                  isBlocked:
+                    type: boolean
+                  available:
+                    type: integer
+                  requested:
+                    type: integer
+                  productOwnerBlocked:
+                    type: boolean
+
+    AdminToolsTypeUserResponse:
+      type: object
+      properties:
+        username:
+          type: string
+        isBussiness:
+          type: boolean
+        isAdmin:
+          type: boolean
+        isBlocked:
+          type: boolean
+
+    BussinessProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        price:
+          type: number
+          format: double
+        quantity:
+          type: integer
+        sold:
+          type: integer
+        productOwner:
+          type: string
+        isBlocked:
+          type: boolean
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySimpleResponse'
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabelSimpleResponse'
+
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        price:
+          type: number
+          format: double
+        quantity:
+          type: integer
+        sold:
+          type: integer
+        productOwner:
+          type: string
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySimpleResponse'
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabelSimpleResponse'
+
+    ShoppingCartResponse:
+      type: object
+      properties:
+        date:
+          type: string
+          description: Fecha formateada
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              image:
+                type: string
+              price:
+                type: number
+                format: double
+              quantity:
+                type: integer
+              sold:
+                type: integer
+              total_available:
+                type: integer
+              isBlocked:
+                type: boolean
+              productOwner:
+                type: string
+
+    ####################################################
+    #          MODELOS SIMPLES (CATEGORÍA / LABEL)
+    ####################################################
+    CategorySimpleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    LabelSimpleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    ####################################################
+    #   ENTIDADES BÁSICAS (PUEDEN SER DE SOLO LECTURA)
+    ####################################################
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        price:
+          type: number
+          format: double
+        quantity:
+          type: integer
+        sold:
+          type: integer
+        blocked:
+          type: boolean
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+        email:
+          type: string
+        enabled:
+          type: boolean
+        isBussiness:
+          type: boolean
+        isAdmin:
+          type: boolean
+
+    ####################################################
+    #    EJEMPLO: ProductRequest (usado en multipart)
+    ####################################################
+    ProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: double
+        quantity:
+          type: integer
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategorySimpleResponse'
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabelSimpleResponse'

@@ -83,7 +83,15 @@ public class ResponseMessagesUtils {
         GenericResponse response = new GenericResponse(
                 message,
                 HttpStatus.CREATED,
-                true);
+                false);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    public static final ResponseEntity<GenericResponse> conflict(String message) {
+        GenericResponse response = new GenericResponse(
+                message,
+                HttpStatus.CONFLICT,
+                true);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 }
