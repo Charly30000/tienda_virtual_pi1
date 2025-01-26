@@ -22,8 +22,12 @@ public interface ProductService {
 
     void deleteById(Long id);
 
-    // Metodo para obtener los Productos de un Usuario paginados
+    // Método para obtener todos los productos paginados
+    Page<Product> findAllPaged(Pageable pageable);
+
+    // Método para buscar productos por nombre con paginación
+    Page<Product> searchByNamePaged(String name, Pageable pageable);
+
+    // Método para obtener productos de un usuario con paginación
     Page<Product> findByUserPageable(User user, Pageable pageable);
-    // metodo para obtener los Productos paginados
-    Page<Product> findByNamePageable(String name, Pageable pageable);
 }
