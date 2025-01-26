@@ -151,36 +151,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
-    post:
-      tags:
-        - Products
-      summary: Crea un producto (ejemplo de endpoint público, si así lo configuras)
-      operationId: createProductPublic
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Product'
-      responses:
-        '201':
-          description: Producto creado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Product'
-        '400':
-          description: Error de validación
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ValidationErrorsResponse'
-        '409':
-          description: Conflicto (producto ya existe)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericResponse'
 
   /api/products/{id}:
     get:
