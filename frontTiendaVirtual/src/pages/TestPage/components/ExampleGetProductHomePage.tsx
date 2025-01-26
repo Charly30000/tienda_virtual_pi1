@@ -160,7 +160,9 @@ export const ExampleGetProductHomePage = () => {
       <div>
         <div>Lista de productos: AQUI IRIAN LAS TARJETAS DE LOS PRODUCTOS</div>
         {data?.products.map((e) => (
-          <div key={e.id}>{e.name}, id:{e.id}, precio:{e.price}</div>
+          <div key={e.id}>
+            {e.name}, id:{e.id}, precio:{e.price}
+          </div>
         ))}
       </div>
       <div>------------------------------------------------------------</div>

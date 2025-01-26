@@ -23,11 +23,11 @@ export class ProductService {
 
   /**
    * Obtiene los productos paginados
-   * @param page Indica la pagina a buscar 
+   * @param page Indica la pagina a buscar
    * @param order Indica si se busca de mas nuevo a más antiguo o al reves (si es un string vacio, de mas nuevo a más antiguo)
-   * @param price Indica si se busca de mas barato a más caro o al reves (cuando se introduzca este dato, 
+   * @param price Indica si se busca de mas barato a más caro o al reves (cuando se introduzca este dato,
    * el campo "order" se ignorará en la peticion)
-   * @param name String que contiene la palabra que debe de contener el producto buscado (Si se busca "Station", 
+   * @param name String que contiene la palabra que debe de contener el producto buscado (Si se busca "Station",
    * recibiremos todos los productos que contienen la palabra "Station")
    * @returns ProductsResponse
    */
@@ -67,7 +67,7 @@ export class ProductService {
    */
   async getProduct(id: number): Promise<Product> {
     try {
-      const response = await this.apiInstance.get(`/product/${id}`);
+      const response = await this.apiInstance.get(`/products/${id}`);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
