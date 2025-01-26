@@ -1233,6 +1233,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LabelSimpleResponse'
+        productBlocked:
+          type: boolean
+          description: Indica si el producto se encuentra bloqueado
+        userOwnerBlocked:
+          type: boolean
+          description: Indica si el dueño de ese producto se encuentra bloqueado
 
     ShoppingCartResponse:
       type: object
@@ -1264,6 +1270,8 @@ components:
                 type: boolean
               productOwner:
                 type: string
+              userOwnerBlocked:
+                type: boolean
 
     ####################################################
     #          MODELOS SIMPLES (CATEGORÍA / LABEL)

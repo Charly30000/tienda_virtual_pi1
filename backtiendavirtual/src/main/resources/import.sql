@@ -31,7 +31,7 @@ INSERT INTO users (id, username, password, email, enabled) VALUES (22, 'ethan_th
 INSERT INTO users (id, username, password, email, enabled) VALUES (23, 'ava_lee', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'ava.lee@email.com', true);
 
 -- Inyección de usuarios con ROLE_BUSSINESS
-INSERT INTO users (id, username, password, email, enabled) VALUES (24, 'switch_tech', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'contact@switchtech.com', false);
+INSERT INTO users (id, username, password, email, enabled) VALUES (24, 'switch_tech', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'contact@switchtech.com', true);
 INSERT INTO users (id, username, password, email, enabled) VALUES (25, 'playstation_world', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'support@playstationworld.com', false);
 INSERT INTO users (id, username, password, email, enabled) VALUES (26, 'xbox_zone', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'info@xboxzone.com', false);
 INSERT INTO users (id, username, password, email, enabled) VALUES (27, 'pi_hub', '$2a$10$pT5wkM1tki2BIdmKFKo.Ou1pT3toL9UhUxRd3uwMa.OAcZmOSdRbW', 'hello@pihub.com', true);
