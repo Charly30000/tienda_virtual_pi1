@@ -6,19 +6,21 @@ import React from "react";
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Card from "@/components/Card";
-import useAuthRedirect from "@/hooks/useAuthRedirect"; // Import the hook
+import useAuthRedirect from "@/hooks/useAuthRedirect";
+import { useTranslate } from "@/hooks/useTranslate";
 
 const HomePage = () => {
   const [sidebarOpen, setSiebarOpen] = useState(false);
 
-  const isAuthenticated = true; // Replace with your authentication logic
+  const isAuthenticated = true;
 
-  // Call the hook to redirect if not authenticated
   useAuthRedirect(isAuthenticated);
 
   const toggleSidebar = () => {
     setSiebarOpen(!sidebarOpen);
   };
+
+  const t = useTranslate();
 
   return (
     <div>
@@ -34,14 +36,14 @@ const HomePage = () => {
                 id="filterPrice"
                 type="button"
                 className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
-                Filtar Precios
+                {t("HomePage", "filterPrice")}
               </button>
 
               <button
                 id="filterNew"
                 type="button"
                 className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
-                Nuevos
+               {t("HomePage", "newProducts")}
               </button>
             </div>
           </div>

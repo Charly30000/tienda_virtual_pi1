@@ -1,11 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslate } from "@/hooks/useTranslate";
 
 interface SidebarProps {
   sidebarOpen: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
+  const t = useTranslate();
+
   return (
     <div
       className={`absolute top-0 left-0 h-full w-[300px] bg-slate-200 shadow-lg transform transition-transform ${
@@ -18,13 +21,13 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
           <Link
             to="/"
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-            Home
+            {t("Sidebar", "home")}
           </Link>
 
           <Link
             to="/before-cart"
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-            Cestas Anteriores
+             {t("Sidebar", "beforeCart")}
           </Link>
         </div>
 
@@ -32,13 +35,13 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
           <Link
             to="/company-tools"
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-            Herraminetas de Empresa
+             {t("Sidebar", "businessTools")}
           </Link>
 
           <Link
             to="/admin-products-tools"
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-            Herramientas de admin
+              {t("Sidebar", "adminTools")}
           </Link>
         </div>
 
@@ -46,10 +49,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
           <Link
             to="/privacy-policy"
             className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-            Politica de privacidad
+            {t("Sidebar", "privacyPolicy")}
           </Link>
-
-        
         </div>
       </div>
     </div>

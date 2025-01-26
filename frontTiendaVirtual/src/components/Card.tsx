@@ -1,7 +1,10 @@
+import { useTranslate } from "@/hooks/useTranslate";
 import React from "react";
 import { Link } from "react-router-dom";
 
 const Card = () => {
+  const t = useTranslate();
+
   return (
     <Link
       to="/product"
@@ -19,7 +22,7 @@ const Card = () => {
       <button
         type="button"
         className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 w-full">
-        Añadir
+        {t("card", "add")}
       </button>
     </Link>
   );
