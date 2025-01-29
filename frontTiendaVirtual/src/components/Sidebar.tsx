@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslate } from "@/hooks/useTranslate";
+import { useAuthStore } from "@/store/authStore";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -8,6 +9,10 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
   const t = useTranslate();
+
+  const isAdmin = useAuthStore((e) => e.isAdmin);
+  const isUser = useAuthStore((e) => e.isUser);
+  const isBussiness = useAuthStore((e) => e.isBussiness);
 
   return (
     <div
@@ -25,23 +30,27 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
           </Link>
 
           <Link
-            to="/before-cart"
+            to="/historic-cart"
             className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-             {t("Sidebar", "beforeCart")}
+            {t("Sidebar", "beforeCart")}
           </Link>
         </div>
 
         <div className="flex flex-col gap-2">
           <Link
             to="/company-tools"
-            className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-             {t("Sidebar", "businessTools")}
+            className={`bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center ${
+              isUser || isAdmin ? "pointer-events-none opacity-50" : ""
+            }`}>
+            {t("Sidebar", "businessTools")}
           </Link>
 
           <Link
             to="/admin-products-tools"
-            className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center">
-              {t("Sidebar", "adminTools")}
+            className={`bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center ${
+              isUser || isBussiness ? "pointer-events-none opacity-50" : ""
+            }`}>
+            {t("Sidebar", "adminTools")}
           </Link>
         </div>
 

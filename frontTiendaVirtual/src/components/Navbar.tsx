@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 interface NavbarProps {
   products: { id: number; name: string }[];
@@ -7,26 +8,37 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ products, onSearch }) => {
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearch(value);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
 
+  const handleSearchClick = () => {
     const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(value.toLowerCase())
+      product.name.toLowerCase().includes(search.toLowerCase())
     );
+    onSearch(filtered, search);
 
-    onSearch(filtered, value);
+    // Only navigate if the search query changes and the list is updated
+    if (filtered.length > 0) {
+      navigate("/");
+    }
   };
 
   return (
-    <div className="w-full mr-3">
+    <div className="w-full mr-3 flex">
       <input
         placeholder="Search products..."
         className="w-full bg-white px-2 py-1 rounded-md border-none"
         value={search}
-        onChange={handleSearch}
+        onChange={handleInputChange}
       />
+      <button
+        onClick={handleSearchClick}
+        className="ml-2 bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-500 ease-in duration-100">
+        Search
+      </button>
     </div>
   );
 };

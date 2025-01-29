@@ -2,22 +2,29 @@ import { useTranslate } from "@/hooks/useTranslate";
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Card = () => {
+interface CardProps {
+  name: string;
+  image: string;
+  price: number;
+  quantity: number;
+}
+
+const Card: React.FC<CardProps> = ({ name, image, price, quantity }) => {
   const t = useTranslate();
 
   return (
     <Link
       to="/product"
-      className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
+      className="flex flex-1 items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
       <div className=" rounded-lg">
-        <img src="src/assets/img/no-image.webp" alt="no image" />
+        <img src={image} alt="no image" />
       </div>
 
-      <h3>Play 1</h3>
+      <h3>{name}</h3>
 
-      <p>$100</p>
+      <p>${price}</p>
 
-      <p>5 en stock</p>
+      <p>{quantity} en stock</p>
 
       <button
         type="button"
