@@ -4,7 +4,6 @@ import { GenericResponse } from "../GenericResponse";
 import { AuthUtils } from "@/utils/AuthUtils";
 import { ProductRequest } from "./Props/ProductsRequest";
 import { Product, ProductsResponse } from "./Props/ProductsResponse";
-import { productResponseMock } from "./mocks/ProductsResponse.mock";
 
 /**
  * Manejo del servicio de la cesta de la compra del usuario
@@ -23,8 +22,14 @@ export class ProductService {
   }
 
   /**
-   * Obtiene los productos
-   * @returns
+   * Obtiene los productos paginados
+   * @param page Indica la pagina a buscar
+   * @param order Indica si se busca de mas nuevo a más antiguo o al reves (si es un string vacio, de mas nuevo a más antiguo)
+   * @param price Indica si se busca de mas barato a más caro o al reves (cuando se introduzca este dato,
+   * el campo "order" se ignorará en la peticion)
+   * @param name String que contiene la palabra que debe de contener el producto buscado (Si se busca "Station",
+   * recibiremos todos los productos que contienen la palabra "Station")
+   * @returns ProductsResponse
    */
   async getProducts({
     page,
@@ -33,17 +38,15 @@ export class ProductService {
     name,
   }: ProductRequest): Promise<ProductsResponse> {
     try {
-      // Cambiar cuando funcione correctamente
-      //   const response = await this.apiInstance.get("/products", {
-      //     params: {
-      //         page: page,
-      //         order: order,
-      //         price: price,
-      //         name: name
-      //     }
-      //   });
-      //   return response.data;
-      return new Promise((resolve) => resolve(productResponseMock));
+      const response = await this.apiInstance.get("/products", {
+        params: {
+          page: page,
+          order: order,
+          price: price,
+          name: name,
+        },
+      });
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const genericResponse: GenericResponse = error.response.data;
@@ -64,10 +67,8 @@ export class ProductService {
    */
   async getProduct(id: number): Promise<Product> {
     try {
-      // Cambiar cuando funcione correctamente
-      // const response = await this.apiInstance.get(`/product/${id}`);
-      // return response.data;
-      return new Promise((resolve) => resolve(productResponseMock.products[0]));
+      const response = await this.apiInstance.get(`/products/${id}`);
+      return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const genericResponse: GenericResponse = error.response.data;

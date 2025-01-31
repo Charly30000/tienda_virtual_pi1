@@ -17,7 +17,9 @@ import jakarta.validation.Valid;
         "sold",
         "productOwner",
         "categories",
-        "labels"
+        "labels",
+        "productBlocked",
+        "userOwnerBlocked"
 })
 public class ProductResponse {
 
@@ -43,10 +45,14 @@ public class ProductResponse {
     @JsonProperty("labels")
     @Valid
     private List<Label> labels;
+    @JsonProperty("productBlocked")
+    private boolean productBlocked;
+    @JsonProperty("userOwnerBlocked")
+    private boolean userOwnerBlocked;
 
     public ProductResponse(Long id, String name, String description, String image, Double price, Integer quantity,
-            Integer sold, String productOwner, List<Category> categories, List<Label> labels) {
-        super();
+            Integer sold, String productOwner, List<Category> categories, List<Label> labels, boolean productBlocked,
+            boolean userOwnerBlocked) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -57,6 +63,8 @@ public class ProductResponse {
         this.productOwner = productOwner;
         this.categories = categories;
         this.labels = labels;
+        this.productBlocked = productBlocked;
+        this.userOwnerBlocked = userOwnerBlocked;
     }
 
     @JsonProperty("id")
@@ -159,6 +167,26 @@ public class ProductResponse {
         this.labels = labels;
     }
 
+    @JsonProperty("productBlocked")
+    public boolean isProductBlocked() {
+        return productBlocked;
+    }
+
+    @JsonProperty("productBlocked")
+    public void setProductBlocked(boolean productBlocked) {
+        this.productBlocked = productBlocked;
+    }
+
+    @JsonProperty("userOwnerBlocked")
+    public boolean isUserOwnerBlocked() {
+        return userOwnerBlocked;
+    }
+
+    @JsonProperty("userOwnerBlocked")
+    public void setUserOwnerBlocked(boolean userOwnerBlocked) {
+        this.userOwnerBlocked = userOwnerBlocked;
+    }
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonPropertyOrder({
             "id",
@@ -252,4 +280,5 @@ public class ProductResponse {
         }
 
     }
+
 }

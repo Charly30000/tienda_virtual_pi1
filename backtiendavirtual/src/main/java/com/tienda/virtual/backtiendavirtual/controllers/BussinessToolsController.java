@@ -257,7 +257,9 @@ public class BussinessToolsController {
                             newProduct.getCategories().stream()
                                     .map(np -> new ProductResponse.Category(np.getId(), np.getName())).toList(),
                             newProduct.getLabels().stream()
-                                    .map(np -> new ProductResponse.Label(np.getId(), np.getName())).toList()));
+                                    .map(np -> new ProductResponse.Label(np.getId(), np.getName())).toList(),
+                            newProduct.isBlocked(),
+                            !newProduct.getUser().isEnabled()));
         } catch (UserBlockedException e) {
             e.printStackTrace();
             return ResponseMessagesUtils.userBlocked();
@@ -428,7 +430,9 @@ public class BussinessToolsController {
                             newProduct.getCategories().stream()
                                     .map(np -> new ProductResponse.Category(np.getId(), np.getName())).toList(),
                             newProduct.getLabels().stream()
-                                    .map(np -> new ProductResponse.Label(np.getId(), np.getName())).toList()));
+                                    .map(np -> new ProductResponse.Label(np.getId(), np.getName())).toList(),
+                            newProduct.isBlocked(),
+                            !newProduct.getUser().isEnabled()));
         } catch (UserBlockedException e) {
             e.printStackTrace();
             return ResponseMessagesUtils.userBlocked();

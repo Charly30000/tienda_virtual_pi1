@@ -17,7 +17,7 @@ const Card: React.FC<CardProps> = ({ name, image, price, quantity }) => {
       to="/product"
       className="flex flex-1 items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
       <div className=" rounded-lg">
-        <img src={image} alt="no image" />
+        <img src="src/assets/img/no-image.webp" alt="No image" />
       </div>
 
       <h3>{name}</h3>

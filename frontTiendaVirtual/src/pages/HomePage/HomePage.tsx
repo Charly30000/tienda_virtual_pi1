@@ -9,13 +9,22 @@ import { useTranslate } from "@/hooks/useTranslate";
 import { useAuthStore } from "@/store/authStore";
 import { useNavigate } from "react-router-dom";
 import { useServices } from "@/hooks/useServices";
-import { HistoricShoppingCartResponse } from "@/services/ShoppingCart/Props/HistoricShoppingCartResponse";
-import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
+import { ProductsResponse } from "@/services/Products/Props/ProductsRequest";
+import { ProductService } from "@/services/Products/ProductService";
+import { useProductStateStore } from "@/store/productStateStore";
 
 const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 8;
+
+  const changePriceOrder = useProductStateStore((e) => e.changePriceOrder);
+  const changeNewestOrder = useProductStateStore((e) => e.changeNewestOrder);
+  const flushOrder = useProductStateStore((e) => e.flushOrder);
+  const flushPrice = useProductStateStore((e) => e.flushPrice);
+  const name = useProductStateStore((e) => e.getState().name);
+  const order = useProductStateStore((e) => e.getState().order);
+  const price = useProductStateStore((e) => e.getState().price);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -34,11 +43,18 @@ const HomePage = () => {
   // }, []);
 
   const { callService, errors, isLoading, data } =
-    useServices<HistoricShoppingCartResponse>();
-  const shoppingCartService = new ShoppingCartService();
+    useServices<ProductsResponse>();
+  const productService = new ProductService();
 
-  const callTestService = async () => {
-    const fetchedData = await callService(shoppingCartService.historic());
+  const callProductsService = async () => {
+    const fetchedData = await callService(
+      productService.getProducts({
+        page: 1,
+        order: "asc",
+        price: "asc",
+        name: "",
+      })
+    );
     if (errors) {
       console.error(errors);
     }
@@ -47,22 +63,60 @@ const HomePage = () => {
     }
   };
 
+  const orderByPrice = async () => {
+    flushOrder();
+    changePriceOrder();
+    const { name, order, price } = useProductStateStore.getState();
+    const data = await callService(
+      productService.getProducts({
+        page: 1,
+        name: name,
+        order: order,
+        price: price,
+      })
+    );
+    if (errors) {
+      console.error(errors);
+    }
+    if (data) {
+      console.log("data", data);
+    }
+  };
+
+  const orderByAntique = async () => {
+    flushPrice();
+    changeNewestOrder();
+    const { name, order, price } = useProductStateStore.getState();
+    const data = await callService(
+      productService.getProducts({
+        page: 1,
+        name: name,
+        order: order,
+        price: price,
+      })
+    );
+    if (errors) {
+      console.error(errors);
+    }
+    if (data) {
+      console.log("data", data);
+    }
+  };
+
   useEffect(() => {
-    callTestService();
+    callProductsService();
   }, []);
 
-  const paginatedData = React.useMemo(() => {
-    const allProducts = data ? data.flatMap((entry) => entry.products) : [];
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return allProducts.slice(startIndex, startIndex + itemsPerPage);
-  }, [data, currentPage]);
-
-  const handlePageChange = (
-    _event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+
+  const paginatedData = data
+    ? data.products.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+      )
+    : [];
 
   return (
     <div>
@@ -77,48 +131,46 @@ const HomePage = () => {
               <button
                 id="filterPrice"
                 type="button"
-                className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
+                className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100"
+                onClick={orderByPrice}
+                disabled={isLoading}>
                 {t("HomePage", "filterPrice")}
               </button>
 
               <button
                 id="filterNew"
                 type="button"
-                className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
+                className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100"
+                onClick={orderByAntique}
+                disabled={isLoading}>
                 {t("HomePage", "newProducts")}
               </button>
             </div>
           </div>
 
           <div className="w-full mt-3 h-1/2">
-            <div className="flex justify-between">
-              {isLoading ? (
-                "Cargando datos..."
-              ) : paginatedData.length > 0 ? (
-                <div className="flex flex-1 justify-between gap-4">
-                  {paginatedData.map((product) => (
+            <div className="grid grid-cols-4 gap-4">
+              {isLoading
+                ? "Cargando datos..."
+                : paginatedData.length > 0
+                ? paginatedData.map((product) => (
                     <Card
-                      className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white"
                       key={product.id}
                       name={product.name}
-                      image={product.image}
                       price={product.price}
+                      image={product.image}
                       quantity={product.quantity}
                     />
-                  ))}
-                </div>
-              ) : (
-                "No data available"
-              )}
+                  ))
+                : "No data available"}
             </div>
           </div>
 
-          <div className="pt-3 flex justify-center">
+          <div className="pt-10 flex justify-center">
             <Stack spacing={2}>
               <Pagination
                 count={Math.ceil(
-                  (data ? data.flatMap((entry) => entry.products).length : 0) /
-                    itemsPerPage
+                  (data ? data.products.length : 0) / itemsPerPage
                 )}
                 page={currentPage}
                 onChange={handlePageChange}

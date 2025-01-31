@@ -36,6 +36,7 @@ export const useServices = <T,>() => {
       return response; // Devolver la respuesta tipada
     } catch (error) {
       setErrors(error);
+      setData(null);
       console.error("Error en la llamada al servicio:", error);
       return null;
     } finally {
