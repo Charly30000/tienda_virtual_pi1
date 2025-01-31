@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslate } from "@/hooks/useTranslate";
-import { useAuthStore } from "@/store/authStore";
 import { AuthUtils } from "@/utils/AuthUtils";
 
 interface SidebarProps {
@@ -38,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
 
         <div className="flex flex-col gap-2">
           <Link
-            to="/company-tools"
+            to="/bussiness-tools"
             className={`bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center ${
               isBussiness ? "" : "pointer-events-none opacity-50"
             }`}>

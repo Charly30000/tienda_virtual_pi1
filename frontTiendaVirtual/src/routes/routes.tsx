@@ -6,7 +6,7 @@ import { RegisterPage } from "@/pages/RegisterPage/RegisterPage";
 import AdminProductsToolsPage from "@/pages/AdminProductsToolsPage/AdminProductsToolsPage";
 import AdminPersonToolsPage from "@/pages/AdminPersonToolsPage/AdminPersonToolsPage";
 import CartPage from "@/pages/CartPage/CartPage";
-import CompanyToolsPage from "@/pages/CompanyToolsPage/CompanyToolsPage";
+import { BussinessToolsPage } from "@/pages/BussinessToolsPage/BussinessToolsPage";
 import PaymentPage from "@/pages/PaymentPage/PaymentPage";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import ProductPage from "@/pages/ProductPage/ProductPage";
@@ -21,7 +21,7 @@ const AppRoutes = () => (
       <Route path="/admin-products-tools" element={<AdminProductsToolsPage />} />
       <Route path="/admin-person-tools" element={<AdminPersonToolsPage />} />
       <Route path="/cart" element={<CartPage />} />
-      <Route path="/company-tools" element={<CompanyToolsPage />} />
+      <Route path="/bussiness-tools" element={<BussinessToolsPage />} />
       <Route path="/payment" element={<PaymentPage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
       <Route path="/product" element={<ProductPage />} />
