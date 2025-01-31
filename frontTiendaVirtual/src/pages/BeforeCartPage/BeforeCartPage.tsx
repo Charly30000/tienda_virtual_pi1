@@ -1,4 +1,3 @@
-import CartProduct from "@/components/CartProduct";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
@@ -9,6 +8,7 @@ import { useAuthStore } from "@/store/authStore";
 import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
 import { useServices } from "@/hooks/useServices";
 import { ShoppingCart } from "@/services/ShoppingCart/Props/GetShoppingCartResponse";
+import CartProduct from "@/components/CartProduct";
 
 const BeforeCartPage = () => {
   const [sidebarOpen, setSiebarOpen] = useState(false);
@@ -77,7 +77,7 @@ const BeforeCartPage = () => {
                   <h4 className="text-center"> {t("beforeCart", "total")}</h4>
                 </div>
 
-                {isExpanded && <CartProduct />}
+                {isExpanded && <CartProduct  />}
               </div>
 
               <button
