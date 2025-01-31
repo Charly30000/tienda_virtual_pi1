@@ -39,10 +39,10 @@ public class ShoppingCartController {
     private UserUtils userUtils;
 
     @Autowired
-    ShoppingCartService shoppingCartService;
+    private ShoppingCartService shoppingCartService;
 
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @GetMapping
     @Secured(ConstantsRoles.ROLE_USER)
@@ -68,7 +68,8 @@ public class ShoppingCartController {
                         productSC.getSold(),
                         productSC.getQuantity() - productSC.getSold(),
                         productSC.isBlocked(),
-                        productSC.getUser().getUsername());
+                        productSC.getUser().getUsername(),
+                        !productSC.getUser().isEnabled());
                 products.add(product);
             }
 
@@ -302,7 +303,8 @@ public class ShoppingCartController {
                             productSC.getSold(),
                             productSC.getQuantity() - productSC.getSold(),
                             productSC.isBlocked(),
-                            productSC.getUser().getUsername());
+                            productSC.getUser().getUsername(),
+                            !productSC.getUser().isEnabled());
                     products.add(product);
                 }
                 response.add(shoppingCartResponse);

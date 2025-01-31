@@ -47,6 +47,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    public Optional<Product> findByIdWithLabelsAndCategories(Long id) {
+        Optional<Product> productOpt = productRepository.findById(id);
+
+        productOpt.ifPresent(product -> {
+            List<Product> singleProductList = List.of(product);
+            productRepository.fetchCategories(singleProductList);
+            productRepository.fetchLabels(singleProductList);
+        });
+
+        return productOpt;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Optional<Product> findByName(String name) {
         return productRepository.findByName(name);
     }
@@ -90,6 +104,17 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public Page<Product> findByNamePageable(String name, Pageable pageable) {
         Page<Product> productsPage = productRepository.findByNameContainingIgnoreCase(name, pageable);
+        // Cargar categorías
+        List<Product> productsWithCategories = productRepository.fetchCategories(productsPage.getContent());
+        // Cargar etiquetas
+        productRepository.fetchLabels(productsWithCategories);
+        return productsPage;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> findByNameAndFiltersPageable(String name, Pageable pageable) {
+        Page<Product> productsPage = productRepository.findByNameAndFilters(name, pageable);
         // Cargar categorías
         List<Product> productsWithCategories = productRepository.fetchCategories(productsPage.getContent());
         // Cargar etiquetas

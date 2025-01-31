@@ -30,4 +30,8 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     List<Product> fetchLabels(@Param("products") List<Product> products);
 
     Page<Product> findByNameContainingIgnoreCase(@Param("name") String name, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND p.blocked = false AND p.user.enabled = true")
+    Page<Product> findByNameAndFilters(@Param("name") String name, Pageable pageable);
+
 }
