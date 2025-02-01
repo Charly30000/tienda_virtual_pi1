@@ -38,13 +38,28 @@ export const CreateProductPage = () => {
         labels: [],
       },
       (values) => {
-        const errors: { [key in keyof CreateProductRequest]?: string } = {};
+        const errors: {
+          [key in keyof CreateProductRequest | "image"]?: string;
+        } = {};
+
         if (!values.name) errors.name = "El nombre es obligatorio";
         if (!values.description)
           errors.description = "La descripción es obligatoria";
         if (values.price <= 0) errors.price = "El precio debe ser mayor a 0";
         if (values.quantity <= 0)
           errors.quantity = "La cantidad debe ser mayor a 0";
+
+        // Validar imagen (si existe)
+        if (selectedImage) {
+          if (selectedImage.name.length > 100) {
+            errors.image =
+              "El nombre del archivo no debe superar los 100 caracteres";
+          }
+          if (selectedImage.size > 10 * 1024 * 1024) {
+            errors.image = "El archivo no debe superar los 10MB";
+          }
+        }
+
         return errors;
       }
     );
@@ -62,22 +77,44 @@ export const CreateProductPage = () => {
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+    if (file) {
+      if (file.name.length > 100) {
+        alert("El nombre del archivo no debe superar los 100 caracteres.");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert("El archivo no debe superar los 10MB.");
+        return;
+      }
+      if (file.type !== "image/jpeg" && file.type !== "image/png") {
+        alert("Solo se permiten archivos JPG y PNG.");
+        return;
+      }
+
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      alert("Solo se permiten archivos JPG y PNG.");
     }
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
-    if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+    if (file) {
+      if (file.name.length > 100) {
+        alert("El nombre del archivo no debe superar los 100 caracteres.");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert("El archivo no debe superar los 10MB.");
+        return;
+      }
+      if (file.type !== "image/jpeg" && file.type !== "image/png") {
+        alert("Solo se permiten archivos JPG y PNG.");
+        return;
+      }
+
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
-    } else {
-      alert("Solo se permiten archivos JPG y PNG.");
     }
   };
 
