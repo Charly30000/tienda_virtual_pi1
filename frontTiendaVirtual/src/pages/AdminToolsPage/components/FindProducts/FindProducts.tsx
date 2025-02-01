@@ -1,9 +1,105 @@
-import React from 'react'
+import { useEffect, useState } from "react";
+import { Row } from "./Row";
+import { useServices } from "@/hooks/useServices";
+import { AdminToolsService } from "@/services/AdminTools/AdminToolsService";
+import { GetFilteredProductsPaginate } from "@/services/AdminTools/Props/GetFilteredProductsPaginate";
+import { Paginator } from "@/components/Paginator";
+import { useForm } from "@/hooks/useForm";
+import { GenericResponse } from "@/services/GenericResponse";
+import Swal from "sweetalert2";
 
 export const FindProducts = () => {
+  const [productName, setProductName] = useState("");
+
+  const {
+    callService: callServiceGetProducts,
+    errors: errorsGetProducts,
+    data,
+  } = useServices<GetFilteredProductsPaginate>();
+
+  const { callService: callServiceBlockProduct, errors: errorsBlockProduct } =
+    useServices<GenericResponse>();
+
+  const adminToolsService = new AdminToolsService();
+
+  const { values, setValues } = useForm<{
+    products: GetFilteredProductsPaginate["products"];
+  }>({
+    products: [],
+  });
+
+  const onClickCheckBlock = (
+    id: number,
+    productName: string,
+    isBlocked: boolean
+  ) => {
+    Swal.fire({
+      title: `¿${
+        isBlocked ? "Desbloquear" : "Bloquear"
+      } el producto '${productName}'?`,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const data = await callServiceBlockProduct(
+          adminToolsService.blockUnblockProductById(id)
+        );
+        if (data && !data.error) {
+          setValues((prev) => ({
+            products: prev.products.map((product) =>
+              product.id === id
+                ? { ...product, productBlocked: !product.productBlocked }
+                : product
+            ),
+          }));
+          Swal.fire(
+            `Producto '${productName}' actualizado correctamente`,
+            "",
+            "success"
+          );
+        }
+      }
+    });
+  };
+
+  const changePage = async (page: number, productName: string) => {
+    await callServiceGetProducts(
+      adminToolsService.getFilteredProductsPaginate({ name: productName, page })
+    );
+  };
+
+  useEffect(() => {
+    if (data) {
+      setValues({ products: data.products });
+    }
+  }, [data]);
+
+  useEffect(() => {
+    changePage(1, productName);
+  }, []);
+
+  useEffect(() => {
+    if (errorsGetProducts) {
+      Swal.fire(
+        "Error inesperado",
+        "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde: " +
+          JSON.stringify(errorsGetProducts),
+        "error"
+      );
+    }
+    if (errorsBlockProduct) {
+      Swal.fire(
+        "Error inesperado",
+        "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde: " +
+          JSON.stringify(errorsBlockProduct),
+        "error"
+      );
+    }
+  }, [errorsGetProducts, errorsBlockProduct]);
+
   return (
     <div className="relative overflow-hidden shadow-md sm:rounded-lg p-4 bg-white">
-      {/* Barra de búsqueda con botón */}
       <div className="flex items-center justify-end flex-wrap md:flex-nowrap space-x-3 pb-4 bg-white dark:bg-gray-900">
         <div className="relative">
           <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -25,14 +121,17 @@ export const FindProducts = () => {
           </div>
           <input
             type="text"
-            id="table-search-users"
+            id="table-search-products"
             className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Nombre de usuario..."
+            placeholder="Nombre del producto..."
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
           />
         </div>
         <button
           type="button"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          onClick={() => changePage(1, productName)}
         >
           Buscar
         </button>
@@ -44,67 +143,41 @@ export const FindProducts = () => {
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
-                Usuario
+                Producto
               </th>
               <th scope="col" className="px-6 py-3">
-                Usuario empresarial
+                Precio
               </th>
               <th scope="col" className="px-6 py-3">
-                Usuario bloqueado
+                Propietario
               </th>
               <th scope="col" className="px-6 py-3">
-                Eliminar usuario
+                Bloqueado
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <th
-                scope="row"
-                className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white"
-              >
-                <div className="ps-3">
-                  <div className="text-base font-semibold">Neil Sims</div>
-                  <div className="font-normal text-gray-500">
-                    neil.sims@flowbite.com
-                  </div>
-                </div>
-              </th>
-              <td className="px-6 py-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <span className="text-gray-700 dark:text-gray-300 text-sm">
-                    ¿Es empresario?
-                  </span>
-                </label>
-              </td>
-              <td className="px-6 py-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <span className="text-gray-700 dark:text-gray-300 text-sm">
-                    ¿Está bloqueado?
-                  </span>
-                </label>
-              </td>
-
-              <td className="px-6 py-4">
-                <button
-                  type="button"
-                  className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-700"
-                >
-                  Eliminar usuario
-                </button>
-              </td>
-            </tr>
+            {values.products.map((p, idx) => (
+              <Row
+                key={idx}
+                id={p.id}
+                name={p.name}
+                price={p.price}
+                userOwner={p.productOwner}
+                isBlocked={p.productBlocked}
+                onClickCheckBlock={onClickCheckBlock}
+              />
+            ))}
           </tbody>
         </table>
       </div>
+      <div>
+        <Paginator
+          currentPage={data?.pages.actualPage || 1}
+          totalPages={data?.pages.totalPages || 1}
+          onChangePage={(page) => changePage(page, productName)}
+        />
+      </div>
     </div>
-  )
-}
+  );
+};

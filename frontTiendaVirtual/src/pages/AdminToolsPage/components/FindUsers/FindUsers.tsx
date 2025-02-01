@@ -96,11 +96,12 @@ export const FindUsers = () => {
     await callServiceGetUsers(adminToolsService.getUsers({ page, username }));
   };
 
-  const onClickFindByUsername = async() => {
-    await callServiceGetUsers(adminToolsService.getUsers({ page: 1, username }));
-  }
+  const onClickFindByUsername = async () => {
+    await callServiceGetUsers(
+      adminToolsService.getUsers({ page: 1, username })
+    );
+  };
 
-  // Sincronizar datos con el formulario cuando `data` cambia
   useEffect(() => {
     if (data) {
       setValues({ users: data.users });
