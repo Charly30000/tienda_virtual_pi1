@@ -13,6 +13,7 @@ import ProductPage from "@/pages/ProductPage/ProductPage";
 import BeforeCartPage from "@/pages/BeforeCartPage/BeforeCartPage";
 import { TestPage } from "@/pages/TestPage/TestPage";
 import { CreateProductPage } from "@/pages/CreateProductPage/CreateProductPage";
+import { ModifyProductPage } from "@/pages/ModifyProduct/ModifyProductPage";
 
 const AppRoutes = () => (
   <Router>
@@ -30,6 +31,7 @@ const AppRoutes = () => (
       <Route path="/" element={<HomePage />} />
       <Route path="/testPage" element={<TestPage/>} />
       <Route path="/create-product" element={<CreateProductPage/>} />
+      <Route path="/modify-product/:id" element={<ModifyProductPage/>} />
     </Routes>
   </Router>
 );

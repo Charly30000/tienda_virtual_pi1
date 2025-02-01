@@ -5,7 +5,7 @@ import { useServices } from "@/hooks/useServices";
 import { BussinessToolsService } from "@/services/BussinessTools/BussinessToolsService";
 import { CreateProductResponse } from "@/services/BussinessTools/Props/CreateProductResponse";
 import { AuthUtils } from "@/utils/AuthUtils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "@/hooks/useForm";
 import {
   Category,
@@ -14,21 +14,40 @@ import {
 } from "@/services/BussinessTools/Props/CreateProductRequest";
 import { DynamicSelectGroup } from "@/components/DynamicSelectGroup";
 import Swal from "sweetalert2";
+import { ProductService } from "@/services/Products/ProductService";
+import { Product } from "@/services/Products/Props/ProductsResponse";
+import { API_CONFIG } from "@/config/ApiConfig";
 import { sanitizeText } from "@/utils/textUtils";
 import image from "@/assets/img/no-image.webp";
 
-export const CreateProductPage = () => {
+export const ModifyProductPage = () => {
+  const { id } = useParams();
   const isUserLogged = AuthUtils.getAuthDetails().token !== "";
   const isBussinessUser = AuthUtils.getAuthDetails().isBussiness;
+  const username = AuthUtils.getAuthDetails().username;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const navigate = useNavigate();
 
-  const { callService, data: categoriesData } = useServices<Category[]>();
-  const { callService: callLabels, data: labelsData } = useServices<Label[]>();
-  const { callService: callCreateProduct, data: dataCreate } =
-    useServices<CreateProductResponse>();
+  const {
+    callService,
+    data: categoriesData,
+    errors: errorsGetCategories,
+  } = useServices<Category[]>();
+  const {
+    callService: callLabels,
+    data: labelsData,
+    errors: errorsGetLabels,
+  } = useServices<Label[]>();
+  const {
+    callService: callUpdateProduct,
+    isLoading,
+    errors: errorsUpdateProduct,
+  } = useServices<CreateProductResponse>();
+  const { callService: callGetProducto, errors: errorsGetProduct } =
+    useServices<Product>();
   const bussinessToolsService = new BussinessToolsService();
+  const productService = new ProductService();
 
   const { values, errors, handleChange, handleSubmit, isInvalid, setValues } =
     useForm<CreateProductRequest>(
@@ -81,6 +100,27 @@ export const CreateProductPage = () => {
 
   useEffect(() => {
     const init = async () => {
+      const data = await callGetProducto(productService.getProduct(Number(id)));
+      if (
+        data &&
+        (username !== data?.productOwner ||
+          data.productBlocked ||
+          data.userOwnerBlocked)
+      ) {
+        navigate("/");
+        return;
+      }
+      if (data) {
+        setValues({
+          name: data.name,
+          categories: data.categories,
+          description: data.description,
+          labels: data.labels,
+          price: data.price,
+          quantity: data.quantity,
+        });
+        setPreviewUrl(API_CONFIG.BASE_URL + data.image);
+      }
       await Promise.all([
         callService(bussinessToolsService.getCategories()),
         callLabels(bussinessToolsService.getLabels()),
@@ -170,9 +210,10 @@ export const CreateProductPage = () => {
   };
 
   const onSubmit = async () => {
-    if (!isInvalid) {
-      await callCreateProduct(
-        bussinessToolsService.createProduct(
+    if (!isInvalid && !isLoading) {
+      await callUpdateProduct(
+        bussinessToolsService.updateProduct(
+          Number(id),
           {
             name: sanitizeText(values.name).replace("\n", ""),
             categories: values.categories,
@@ -185,20 +226,32 @@ export const CreateProductPage = () => {
         )
       );
       Swal.fire({
-        title: "¡Producto creado!",
-        text: `El producto '${values.name}' ha sido creado correctamente!`,
+        title: "¡Producto actualizado!",
+        text: `El producto '${values.name}' ha sido actualizado correctamente!`,
         icon: "success",
-      });
-      setValues({
-        name: "",
-        description: "",
-        price: 0,
-        quantity: 0,
-        categories: [],
-        labels: [],
       });
     }
   };
+
+  useEffect(() => {
+    if (
+      errorsGetCategories ||
+      errorsGetLabels ||
+      errorsUpdateProduct ||
+      errorsGetProduct
+    ) {
+      Swal.fire(
+        "Ha ocurrido un error",
+        "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde por favor",
+        "error"
+      );
+    }
+  }, [
+    errorsGetCategories,
+    errorsGetLabels,
+    errorsUpdateProduct,
+    errorsGetProduct,
+  ]);
 
   return (
     <div className="relative h-full">
@@ -206,7 +259,7 @@ export const CreateProductPage = () => {
       <main className="relative bg-slate-100">
         <Sidebar sidebarOpen={sidebarOpen} />
         <div className="flex flex-col gap-4 p-4">
-          <h1 className="text-2xl font-bold">Crear Producto</h1>
+          <h1 className="text-2xl font-bold">Actualizar Producto</h1>
 
           <form
             onSubmit={(e) => {
@@ -340,8 +393,9 @@ export const CreateProductPage = () => {
             <button
               type="submit"
               className="bg-blue-500 text-white p-2 rounded"
+              disabled={isLoading}
             >
-              Crear Producto
+              Actualizar Producto
             </button>
           </form>
         </div>

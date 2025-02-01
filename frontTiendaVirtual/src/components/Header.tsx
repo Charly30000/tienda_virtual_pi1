@@ -6,6 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
 import { useServices } from "@/hooks/useServices";
 import { HistoricShoppingCartResponse } from "@/services/ShoppingCart/Props/HistoricShoppingCartResponse";
+import icon from '@/assets/img/logo.png';
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -57,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         />
 
         <Link to="/" className="uppercase text-white px-3">
-          <img src="src/assets/img/logo.png" alt="logo" className="w-[50px]" />
+          <img src={icon} alt="logo" className="w-[50px]" />
         </Link>
 
         <Navbar products={products} onSearch={handleSearchResults} />

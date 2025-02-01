@@ -15,12 +15,11 @@ import { Row } from "./components/Row";
 import { useForm } from "@/hooks/useForm";
 import { GenericResponse } from "@/services/GenericResponse";
 import { Card } from "./components/Card";
+import Swal from "sweetalert2";
 
 const CartPage = () => {
   const isUserLogged = AuthUtils.getAuthDetails().token !== "";
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [successModalOpen, setSuccessModalOpen] = useState(false);
 
   const t = useTranslate();
   const navigate = useNavigate();
@@ -34,8 +33,6 @@ const CartPage = () => {
   const shoppingCartService = new ShoppingCartService();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const toggleConfirmModal = () => setConfirmModalOpen(!confirmModalOpen);
-  const toggleSuccessModal = () => setSuccessModalOpen(!successModalOpen);
 
   const { values: formValues, setValues } = useForm<Product[]>([]);
   const [total, setTotal] = useState<number | string>(0);
@@ -86,31 +83,55 @@ const CartPage = () => {
   };
 
   const onClickBuyButton = () => {
-    toggleConfirmModal();
-  };
-
-  const onClickAgreeBuy = async () => {
-    const data = await callServiceBuy(shoppingCartService.buy());
-    if (data && !data.error) {
-      toggleConfirmModal();
-      toggleSuccessModal();
-      getShoppingCart();
-      setValues([]);
-    }
+    Swal.fire({
+      title: "¿Deseas proceder con esta compra?",
+      html: `El total de la compra será de $${total}.<br>La compra se enviará a tu dirección lo antes posible.`,
+      showCancelButton: true,
+      confirmButtonText: "Continuar con la compra",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const data = await callServiceBuy(shoppingCartService.buy());
+        if (data && !data.error) {
+          getShoppingCart();
+          setValues([]);
+          Swal.fire(
+            "¡Compra realizada correctamente!",
+            "Te llegará a la direccion indicada próximamente",
+            "success"
+          );
+        }
+      }
+    });
   };
 
   useEffect(() => {
     if (errors) {
-      alert("Error al obtener la cesta del usuario");
+      Swal.fire(
+        "Error al obtener la cesta del usuario",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
     }
     if (errorsUpdateItem) {
-      alert("Error al actualizar el producto");
+      Swal.fire(
+        "Error al actualizar el producto",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
     }
     if (errorsDeleteItem) {
-      alert("Error al intentar eliminar el producto");
+      Swal.fire(
+        "Error al intentar eliminar el producto",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
     }
     if (errorsBuy) {
-      alert("Error al realizar la compra");
+      Swal.fire(
+        "Error al realizar la compra",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
     }
   }, [errors, errorsUpdateItem, errorsDeleteItem, errorsBuy]);
 
@@ -186,51 +207,7 @@ const CartPage = () => {
             onClick={onClickBuyButton}
           />
         </div>
-
-        {/* Modal de Confirmación */}
-        {confirmModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="p-6 bg-white rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold">
-                ¿Desea confirmar la compra?
-              </h2>
-              <div className="flex gap-4 mt-4">
-                <button
-                  onClick={toggleConfirmModal}
-                  className="bg-gray-400 py-2 px-4 text-white rounded"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={onClickAgreeBuy}
-                  className="bg-blue-500 py-2 px-4 text-white rounded"
-                >
-                  Aceptar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Modal de Compra Exitosa */}
-        {successModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="p-6 bg-white rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold text-green-600">
-                Compra realizada correctamente
-              </h2>
-              <button
-                onClick={toggleSuccessModal}
-                className="mt-4 bg-green-500 py-2 px-4 text-white rounded"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        )}
       </main>
-
-      <Footer />
     </div>
   );
 };

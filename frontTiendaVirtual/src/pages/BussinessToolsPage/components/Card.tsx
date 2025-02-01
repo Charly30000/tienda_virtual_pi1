@@ -1,6 +1,7 @@
 import React from "react";
 import { API_CONFIG } from "@/config/ApiConfig";
 import image from "@/assets/img/no-image.webp";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   id: number;
@@ -14,9 +15,21 @@ interface Props {
 }
 
 export const Card = (props: Props) => {
+  const navigate = useNavigate();
+
+  const goToModifyPage = (
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!props.productBlocked) {
+      navigate(`/modify-product/${props.id}`);
+    }
+  };
+
   return (
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-      <a href="#">
+      <a href="#" onClick={goToModifyPage}>
         <img
           className="p-8 rounded-t-lg h-48 w-full object-contain"
           src={`${API_CONFIG.BASE_URL}${props.image}`}
@@ -36,10 +49,12 @@ export const Card = (props: Props) => {
             <strong>Cantidad:</strong> {props.quantity.toLocaleString("en-US")}
           </p>
           <p>
-            <strong>Total disponibles:</strong> {props.totalAvailable.toLocaleString("en-US")}
+            <strong>Total disponibles:</strong>{" "}
+            {props.totalAvailable.toLocaleString("en-US")}
           </p>
           <p>
-            <strong>Vendidos:</strong> {(props.quantity - props.totalAvailable).toLocaleString("en-US")}
+            <strong>Vendidos:</strong>{" "}
+            {(props.quantity - props.totalAvailable).toLocaleString("en-US")}
           </p>
         </div>
 
@@ -60,7 +75,13 @@ export const Card = (props: Props) => {
           </span>
           <button
             onClick={(e) => props.onBlockProduct(props.id)}
-            className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-700"
+            className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center 
+    ${
+      props.productBlocked
+        ? "bg-gray-400 cursor-not-allowed dark:bg-gray-600"
+        : "bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-700"
+    }`}
+            disabled={props.productBlocked}
           >
             Bloquear producto
           </button>
