@@ -33,13 +33,13 @@ export const Card = (props: Props) => {
 
         <div className="mt-2 text-sm text-gray-700 dark:text-gray-300">
           <p>
-            <strong>Cantidad:</strong> {props.quantity}
+            <strong>Cantidad:</strong> {props.quantity.toLocaleString("en-US")}
           </p>
           <p>
-            <strong>Total disponibles:</strong> {props.totalAvailable}
+            <strong>Total disponibles:</strong> {props.totalAvailable.toLocaleString("en-US")}
           </p>
           <p>
-            <strong>Vendidos:</strong> {props.quantity - props.totalAvailable}
+            <strong>Vendidos:</strong> {(props.quantity - props.totalAvailable).toLocaleString("en-US")}
           </p>
         </div>
 
@@ -52,10 +52,16 @@ export const Card = (props: Props) => {
 
         <div className="flex items-center justify-between mt-4">
           <span className="text-3xl font-bold text-gray-900 dark:text-white">
-            ${props.price}
+            $
+            {props.price.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           </span>
           <button
-          onClick={e => props.onBlockProduct(props.id)} className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-700">
+            onClick={(e) => props.onBlockProduct(props.id)}
+            className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-500 dark:hover:bg-red-600 dark:focus:ring-red-700"
+          >
             Bloquear producto
           </button>
         </div>

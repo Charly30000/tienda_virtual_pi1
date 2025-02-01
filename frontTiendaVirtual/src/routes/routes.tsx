@@ -12,6 +12,7 @@ import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import ProductPage from "@/pages/ProductPage/ProductPage";
 import BeforeCartPage from "@/pages/BeforeCartPage/BeforeCartPage";
 import { TestPage } from "@/pages/TestPage/TestPage";
+import { CreateProductPage } from "@/pages/CreateProductPage/CreateProductPage";
 
 const AppRoutes = () => (
   <Router>
@@ -27,7 +28,8 @@ const AppRoutes = () => (
       <Route path="/product" element={<ProductPage />} />
       <Route path="/historic-cart" element={<BeforeCartPage />} />
       <Route path="/" element={<HomePage />} />
-      <Route path="/testPage" element={<TestPage/>} ></Route>
+      <Route path="/testPage" element={<TestPage/>} />
+      <Route path="/create-product" element={<CreateProductPage/>} />
     </Routes>
   </Router>
 );
