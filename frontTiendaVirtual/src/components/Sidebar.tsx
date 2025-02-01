@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
         sidebarOpen
           ? "translate-x-0 ease-in duration-300"
           : "-translate-x-full ease-out duration-300"
-      }`}>
+      }`} style={{ zIndex: 99999 }}>
       <div className="py-2 px-3 flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <Link
@@ -45,7 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
           </Link>
 
           <Link
-            to="/admin-products-tools"
+            to="/admin-tools"
             className={`bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 text-center ${
               isAdmin ? "" : "pointer-events-none opacity-50"
             }`}>
