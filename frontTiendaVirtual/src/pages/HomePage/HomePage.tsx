@@ -136,7 +136,7 @@ const HomePage = () => {
   };
 
   const productsPerPage = filteredProducts.length
-    ? Math.ceil(filteredProducts.length / data.pages.totalPages)
+    ? Math.ceil(filteredProducts.length / (data?.pages?.totalPages || 1))
     : 0;
   const displayedProducts = filteredProducts.length
     ? filteredProducts.slice(
