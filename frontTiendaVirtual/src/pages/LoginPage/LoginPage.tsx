@@ -12,8 +12,8 @@ import React, { useState } from "react";
 import "./LoginPage.scss";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useForm } from "@/hooks/useForm";
-import { AuthService } from "@/services/Auth/AuthService";
-import { LoginRequest, LoginResponse } from "@/services/Auth/Props/Login";
+import { AuthService } from "@/services/auth/AuthService";
+import { LoginRequest, LoginResponse } from "@/services/auth/Props/Login";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { ErrorsForm, LoginForm } from "./Props/FormProps";
@@ -22,11 +22,10 @@ export const LoginPage = () => {
   const t = useTranslate();
   const auth = useAuth();
   const navigate = useNavigate();
+  const authService = new AuthService();
 
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const authService = new AuthService();
 
   const validate = (data: LoginForm) => {
     const errors: ErrorsForm = {};
@@ -81,7 +80,7 @@ export const LoginPage = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center ">
         <div className="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
           <img
             src="src/assets/img/logo.png"

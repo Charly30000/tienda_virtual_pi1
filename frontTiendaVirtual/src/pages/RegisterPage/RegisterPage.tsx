@@ -70,10 +70,10 @@ export const RegisterPage = () => {
           username: "",
           email: "",
           password: "",
-          repeatPassword: ""
+          repeatPassword: "",
         });
         setTimeout(() => {
-          handleLoginNavigation() // Navega al login después del registro exitoso
+          handleLoginNavigation(); // Navega al login después del registro exitoso
         }, 3000);
       } catch (error) {
         console.error(error);
@@ -90,12 +90,14 @@ export const RegisterPage = () => {
 
   return (
     <div className="container mx-auto">
-      <div className="flex justify-center items-center h-screen">
-
-
+      <div className="flex justify-center items-center ">
         <div className="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-          <img src="src/assets/img/logo.png" alt="logo" className="w-[150px] mb-5" />
-          
+          <img
+            src="src/assets/img/logo.png"
+            alt="logo"
+            className="w-[150px] mb-5"
+          />
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <h5 className="text-xl font-medium text-gray-900 dark:text-white">
               {t("RegisterPage", "title")}
@@ -104,8 +106,7 @@ export const RegisterPage = () => {
             <div>
               <label
                 htmlFor="username"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {t("RegisterPage", "username")}
               </label>
               <input
@@ -131,8 +132,7 @@ export const RegisterPage = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {t("RegisterPage", "email")}
               </label>
               <input
@@ -158,8 +158,7 @@ export const RegisterPage = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {t("RegisterPage", "password")}
               </label>
               <input
@@ -185,8 +184,7 @@ export const RegisterPage = () => {
             <div>
               <label
                 htmlFor="repeatPassword"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 {t("RegisterPage", "repeatPassword")}
               </label>
               <input
@@ -215,16 +213,14 @@ export const RegisterPage = () => {
                 isSubmitting
                   ? "opacity-50 cursor-not-allowed"
                   : "dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              }`}
-            >
+              }`}>
               {t("RegisterPage", "button.register")}
             </button>
             {/* Alerta de error */}
             {errorAlert && (
               <div
                 className="flex items-center p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg border border-red-300 dark:bg-red-200 dark:text-red-800"
-                role="alert"
-              >
+                role="alert">
                 <span>{errorAlert}</span>
               </div>
             )}
@@ -232,8 +228,7 @@ export const RegisterPage = () => {
             {successfullAlert && (
               <div
                 className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-                role="alert"
-              >
+                role="alert">
                 <span className="font-medium">
                   {t("RegisterPage", "user.created1")}
                 </span>{" "}
@@ -244,8 +239,7 @@ export const RegisterPage = () => {
               {t("RegisterPage", "has.account")}&nbsp;
               <button
                 onClick={handleLoginNavigation}
-                className="text-blue-700 hover:underline dark:text-blue-500 linkButton"
-              >
+                className="text-blue-700 hover:underline dark:text-blue-500 linkButton">
                 {t("RegisterPage", "link.login")}
               </button>
             </div>

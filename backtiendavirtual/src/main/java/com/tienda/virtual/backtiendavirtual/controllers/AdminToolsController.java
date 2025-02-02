@@ -84,6 +84,7 @@ public class AdminToolsController {
                     .peek(User::populateTransientFields)
                     .map(u -> new AdminToolsTypeUserResponse(
                             u.getUsername(),
+                            u.getEmail(),
                             u.getIsBussiness(),
                             u.getIsAdmin(),
                             !u.isEnabled()))
@@ -183,7 +184,9 @@ public class AdminToolsController {
                             p.getCategories().stream()
                                     .map(np -> new ProductResponse.Category(np.getId(), np.getName())).toList(),
                             p.getLabels().stream()
-                                    .map(np -> new ProductResponse.Label(np.getId(), np.getName())).toList()))
+                                    .map(np -> new ProductResponse.Label(np.getId(), np.getName())).toList(),
+                            p.isBlocked(),
+                            !p.getUser().isEnabled()))
                     .toList();
 
             Map<String, Object> pages = new HashMap<>();

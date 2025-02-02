@@ -1,10 +1,13 @@
+import { useTranslate } from "@/hooks/useTranslate";
 import React from "react";
 
 const AdminCartProduct = () => {
   const product = {
     name: "Playstation 5",
-    price: 500, // Price from database in the future
+    price: 500, 
   };
+
+  const t = useTranslate();
 
   return (
     <div className="flex mt-5 items-center border p-3 rounded-sm justify-between gap-3">
@@ -18,14 +21,14 @@ const AdminCartProduct = () => {
 
       <div className="flex w-1/4 items-center justify-between">
         <label htmlFor="isBlocked" className="flex gap-3">
-          Esta blockeado ?
+          {t("adminProductTools", "isBlocked")}
           <input type="checkbox" name="isBlocked" id="isBlocked" />
         </label>
 
         <button
           type="button"
           className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
-          Bloquear producto
+          {t("adminProductTools", "blockProduct")}
         </button>
       </div>
     </div>

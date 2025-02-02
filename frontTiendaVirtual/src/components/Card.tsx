@@ -1,25 +1,78 @@
-import React from "react";
+import { useTranslate } from "@/hooks/useTranslate";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import img from "@/assets/img/no-image.webp";
+import { GenericResponse } from "@/services/GenericResponse";
+import { API_CONFIG } from "@/config/ApiConfig";
+import { useServices } from "@/hooks/useServices";
+import { ProductService } from "@/services/Products/ProductService";
+import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
+import Swal from "sweetalert2";
 
-const Card = () => {
+interface CardProps {
+  id: number;
+  name: string;
+  image: string;
+  price: number;
+  quantity: number;
+}
+
+const Card: React.FC<CardProps> = ({ id, name, image, price, quantity }) => {
+  const t = useTranslate();
+  const [added, setAdded] = useState(false);
+
+  const { callService, errors } = useServices<GenericResponse>();
+  const shoppingCartService = new ShoppingCartService();
+
+  const onAddProduct = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const data = await callService(shoppingCartService.addProduct(id));
+    if (data && !data.error) {
+      setAdded(true);
+    }
+  };
+
+  useEffect(() => {
+    if (errors) {
+      Swal.fire("Error al añadir el producto", errors.message, "error");
+    }
+  }, [errors])
+  
+
   return (
     <Link
-      to="/product"
-      className="flex items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
-      <div className=" rounded-lg">
-        <img src="src/assets/img/no-image.webp" alt="no image" />
+      to={`product/${id}`}
+      className="flex flex-1 items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white "
+    >
+      <div className="rounded-lg">
+        <img
+          alt="No image"
+          src={`${API_CONFIG.BASE_URL}${image}`}
+          onError={(e) => (e.currentTarget.src = img)}
+        />
       </div>
 
-      <h3>Play 1</h3>
+      <h3>{name}</h3>
 
-      <p>$100</p>
+      <p>${price.toLocaleString("en-US")}</p>
 
-      <p>5 en stock</p>
+      <p>{quantity.toLocaleString("en-US")} en stock</p>
 
       <button
         type="button"
-        className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 w-full">
-        Añadir
+        disabled={added || quantity === 0}
+        className={`px-4 py-2 rounded-md text-white transition-colors w-full
+    ${
+      added || quantity === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+    }
+  `}
+        onClick={onAddProduct}
+      >
+        {added ? "Añadido!" : "Añadir al carrito"}
       </button>
     </Link>
   );

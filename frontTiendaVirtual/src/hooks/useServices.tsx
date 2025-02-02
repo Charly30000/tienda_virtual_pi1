@@ -22,10 +22,10 @@ export const useServices = <T,>() => {
    */
   const callService = async (serviceCall: Promise<T>): Promise<T | null> => {
     if (isLoading || hasCalled.current) {
-      return null; // Evitar llamadas redundantes
+      return null;
     }
 
-    hasCalled.current = true; // Marcar como llamada realizada
+    hasCalled.current = true;
     setIsLoading(true);
     setErrors(null);
     setData(null);
@@ -36,6 +36,7 @@ export const useServices = <T,>() => {
       return response; // Devolver la respuesta tipada
     } catch (error) {
       setErrors(error);
+      setData(null);
       console.error("Error en la llamada al servicio:", error);
       return null;
     } finally {

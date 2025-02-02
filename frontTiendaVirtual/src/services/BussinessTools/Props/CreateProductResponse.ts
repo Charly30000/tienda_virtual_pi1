@@ -9,6 +9,8 @@ export interface CreateProductResponse {
     productOwner: string;
     categories:   Category[];
     labels:       Label[];
+    productBlocked: boolean;
+    userOwnerBlocked: boolean;
 }
 
 export interface Category {

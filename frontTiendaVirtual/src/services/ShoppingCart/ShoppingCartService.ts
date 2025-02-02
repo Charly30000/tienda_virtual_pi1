@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { API_CONFIG } from "@/config/ApiConfig";
-import { ShoppingCart } from "./Props/GET-ShoppingCartResponse";
+import { ShoppingCart } from "./Props/GetShoppingCartResponse";
 import { GenericResponse } from "../GenericResponse";
 import { AuthUtils } from "@/utils/AuthUtils";
 import { UpdateProduct } from "./Props/UpdateProductRequest";

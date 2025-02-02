@@ -1,32 +1,30 @@
-import React, { useState } from "react";
+import { useProductStateStore } from "@/store/productStateStore";
+import { useNavigate } from "react-router-dom";
 
-interface NavbarProps {
-  products: { id: number; name: string }[];
-  onSearch: (filtered: { id: number; name: string }[], query: string) => void;
-}
+const Navbar = () => {
+  const navigate = useNavigate();
+  const name = useProductStateStore((e) => e.getState().name);
+  const changeName = useProductStateStore((e) => e.changeName);
+  const onRequestFindProduct = useProductStateStore((e) => e.onRequestFindProduct);
 
-const Navbar: React.FC<NavbarProps> = ({ products, onSearch }) => {
-  const [search, setSearch] = useState("");
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearch(value);
-
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(value.toLowerCase())
-    );
-
-    onSearch(filtered, value);
+  const handleSearchClick = () => {
+    onRequestFindProduct();
+    navigate("/");
   };
 
   return (
-    <div className="w-full mr-3">
+    <div className="w-full mr-3 flex">
       <input
         placeholder="Search products..."
         className="w-full bg-white px-2 py-1 rounded-md border-none"
-        value={search}
-        onChange={handleSearch}
+        value={name}
+        onChange={e => changeName(e.target.value)}
       />
+      <button
+        onClick={handleSearchClick}
+        className="ml-2 bg-blue-600 text-white px-4 py-1 rounded-md hover:bg-blue-500 ease-in duration-100">
+        Buscar
+      </button>
     </div>
   );
 };

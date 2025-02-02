@@ -13,4 +13,5 @@ export interface Product {
     total_available: number;
     isBlocked:       boolean;
     productOwner:    string;
+    userOwnerBlocked: boolean;
 }
