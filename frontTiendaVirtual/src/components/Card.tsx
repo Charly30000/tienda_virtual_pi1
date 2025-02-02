@@ -1,5 +1,5 @@
 import { useTranslate } from "@/hooks/useTranslate";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import img from "@/assets/img/no-image.webp";
@@ -8,6 +8,7 @@ import { API_CONFIG } from "@/config/ApiConfig";
 import { useServices } from "@/hooks/useServices";
 import { ProductService } from "@/services/Products/ProductService";
 import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
+import Swal from "sweetalert2";
 
 interface CardProps {
   id: number;
@@ -35,6 +36,13 @@ const Card: React.FC<CardProps> = ({ id, name, image, price, quantity }) => {
     }
   };
 
+  useEffect(() => {
+    if (errors) {
+      Swal.fire("Error al añadir el producto", errors.message, "error");
+    }
+  }, [errors])
+  
+
   return (
     <Link
       to={`product/${id}`}
@@ -56,10 +64,10 @@ const Card: React.FC<CardProps> = ({ id, name, image, price, quantity }) => {
 
       <button
         type="button"
-        disabled={added}
+        disabled={added || quantity === 0}
         className={`px-4 py-2 rounded-md text-white transition-colors w-full
     ${
-      added ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+      added || quantity === 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
     }
   `}
         onClick={onAddProduct}
