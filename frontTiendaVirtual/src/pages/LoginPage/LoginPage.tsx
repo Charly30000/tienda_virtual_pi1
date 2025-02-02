@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-import './LoginPage.scss'
-
-export const LoginPage = () => {
-  return (
-    <h1>LoginPage</h1>
-  )
-}
-=======
 import React, { useState } from "react";
 import "./LoginPage.scss";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -170,4 +160,3 @@ export const LoginPage = () => {
     </div>
   );
 };
->>>>>>> develop
