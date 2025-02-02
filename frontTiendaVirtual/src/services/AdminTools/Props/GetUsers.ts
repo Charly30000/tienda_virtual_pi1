@@ -10,6 +10,7 @@ export interface Pages {
 
 export interface User {
     username:    string;
+    email:       string;
     isBussiness: boolean;
     isAdmin:     boolean;
     isBlocked:   boolean;

@@ -1,7 +1,7 @@
 import React from "react";
 
 interface CartProductProps {
-  id: number; // If unused, this can be removed
+  id: number;
   image: string;
   name: string;
   price: number;

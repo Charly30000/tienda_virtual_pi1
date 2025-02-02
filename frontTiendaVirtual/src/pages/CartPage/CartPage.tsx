@@ -1,62 +1,148 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Footer from "@/components/Footer";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import CartProduct from "@/components/CartProduct";
 import { useServices } from "@/hooks/useServices";
 import { useTranslate } from "@/hooks/useTranslate";
-import { ShoppingCart } from "@/services/ShoppingCart/Props/GetShoppingCartResponse";
+import {
+  Product,
+  ShoppingCart,
+} from "@/services/ShoppingCart/Props/GetShoppingCartResponse";
 import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
+import { AuthUtils } from "@/utils/AuthUtils";
+import { Row } from "./components/Row";
+import { useForm } from "@/hooks/useForm";
+import { GenericResponse } from "@/services/GenericResponse";
+import { Card } from "./components/Card";
+import Swal from "sweetalert2";
 
 const CartPage = () => {
+  const isUserLogged = AuthUtils.getAuthDetails().token !== "";
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [products, setProducts] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
 
   const t = useTranslate();
   const navigate = useNavigate();
-  const { callService, errors } = useServices<ShoppingCart>();
+  const { callService, errors, data } = useServices<ShoppingCart>();
+  const { callService: callServiceUpdate, errors: errorsUpdateItem } =
+    useServices<GenericResponse>();
+  const { callService: callServiceDeleteItem, errors: errorsDeleteItem } =
+    useServices<GenericResponse>();
+  const { callService: callServiceBuy, errors: errorsBuy } =
+    useServices<GenericResponse>();
   const shoppingCartService = new ShoppingCartService();
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  const toggleModal = () => setModalOpen(!modalOpen);
 
-  const calculateTotalPrice = (cartProducts: any[]) => {
-    const total = cartProducts.reduce(
-      (sum, product) => sum + product.price * product.quantity,
-      0
+  const { values: formValues, setValues } = useForm<Product[]>([]);
+  const [total, setTotal] = useState<number | string>(0);
+
+  const onChangeQuantity = async (id: number, quantity: number) => {
+    const data = await callServiceUpdate(
+      shoppingCartService.updateProduct({ id, quantity })
     );
-    setTotalPrice(total);
+    if (data && !data.error) {
+      setValues((prevValues) =>
+        prevValues.map((product) =>
+          product.id === id ? { ...product, quantity } : product
+        )
+      );
+    }
   };
 
-  // Uncomment this if user authentication is required for accessing the cart
-  // useEffect(() => {
-  //   if (!isUserLogged()) {
-  //     navigate("/login");
-  //   }
-  // }, []);
-
-  const callTestService = async () => {
-    const fetchedData = await callService(
-      shoppingCartService.getShoppingCart()
+  const onDeleteItem = async (id: number) => {
+    const data = await callServiceDeleteItem(
+      shoppingCartService.deleteProduct(id)
     );
-    if (errors) {
-      console.error(errors);
-    }
-    if (fetchedData) {
-      console.log(fetchedData);
-      const flatProducts = Array.isArray(fetchedData)
-        ? fetchedData.flatMap((entry) => entry.products)
-        : [];
-      setProducts(flatProducts);
-      calculateTotalPrice(flatProducts);
+    if (data && !data.error) {
+      setValues((prevValues) =>
+        prevValues.filter((product) => product.id !== id)
+      );
     }
   };
 
   useEffect(() => {
-    callTestService();
+    if (!isUserLogged) {
+      navigate("/login");
+    }
+  }, []);
+
+  useEffect(() => {
+    setTotal(
+      formValues
+        .reduce((total, p) => total + p.price * p.quantity, 0)
+        .toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+    );
+  }, [formValues]);
+
+  const getShoppingCart = async () => {
+    await callService(shoppingCartService.getShoppingCart());
+  };
+
+  const onClickBuyButton = () => {
+    Swal.fire({
+      title: "¿Deseas proceder con esta compra?",
+      html: `El total de la compra será de $${total}.<br>La compra se enviará a tu dirección lo antes posible.`,
+      showCancelButton: true,
+      confirmButtonText: "Continuar con la compra",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const data = await callServiceBuy(shoppingCartService.buy());
+        if (data && !data.error) {
+          getShoppingCart();
+          setValues([]);
+          Swal.fire(
+            "¡Compra realizada correctamente!",
+            "Te llegará a la direccion indicada próximamente",
+            "success"
+          );
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (errors) {
+      Swal.fire(
+        "Error al obtener la cesta del usuario",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
+    }
+    if (errorsUpdateItem) {
+      Swal.fire(
+        "Error al actualizar el producto",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
+    }
+    if (errorsDeleteItem) {
+      Swal.fire(
+        "Error al intentar eliminar el producto",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
+    }
+    if (errorsBuy) {
+      Swal.fire(
+        "Error al realizar la compra",
+        "Por favor, intentalo de nuevo más tarde",
+        "error"
+      );
+    }
+  }, [errors, errorsUpdateItem, errorsDeleteItem, errorsBuy]);
+
+  useEffect(() => {
+    if (data) {
+      setValues(data.products);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    getShoppingCart();
   }, []);
 
   return (
@@ -66,82 +152,62 @@ const CartPage = () => {
       <main className="relative bg-slate-100">
         <Sidebar sidebarOpen={sidebarOpen} />
 
-        <div className="px-10 py-2">
-          <div className="w-full mt-3 h-1/2 flex gap-3">
-            <div className="w-3/4 flex flex-col gap-2">
-              <div className="flex items-center border p-3 rounded-sm justify-end gap-3">
-                <h3 className="w-2/6">{t("cartPage", "product")}</h3>
-                <p className="w-1/6">{t("cartPage", "price")}</p>
-                <p className="w-1/6">{t("cartPage", "quantity")}</p>
-                <h4 className="w-1/6">{t("cartPage", "subtotal")}</h4>
-              </div>
-
-              {products.map((product, index) => (
-                <CartProduct
-                  key={`${product.id}-${index}`} // Combine id and index for a unique key
-                  id={product.id}
-                  image={product.image || "./src/assets/img/no-image.webp"}
-                  name={product.name}
-                  price={product.price}
-                  quantity={product.quantity}
-                />
-              ))}
-
-              <button
-                type="button"
-                className="w-full py-3 bg-blue-500 rounded-lg text-white"
-              >
-                {t("cartPage", "update")}
-              </button>
-            </div>
-
-            <div className="w-1/4 px-3 shadow-lg bg-blue-50 rounded-lg flex flex-col items-center justify-center gap-5">
-              <h3>
-                {t("cartPage", "productTotal")}: {products.length}
-              </h3>
-
-              <h4>
-                {t("cartPage", "total")}: ${totalPrice.toFixed(2)}
-              </h4>
-
-              <button
-                type="button"
-                onClick={toggleModal}
-                className="w-full py-3 bg-blue-500 rounded-lg text-white"
-              >
-                {t("cartPage", "finish")}
-              </button>
+        <div className="flex flex-row gap-4 p-4">
+          <div className="w-3/4">
+            <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-16 py-3">
+                      <span className="sr-only">Imagen</span>
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Producto
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Cantidad
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Precio
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Accion
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {formValues.map((p) => (
+                    <Row
+                      key={p.id}
+                      id={p.id}
+                      image={p.image}
+                      name={p.name}
+                      price={p.price}
+                      quantity={p.quantity}
+                      totalAvailable={p.total_available}
+                      productBlocked={p.isBlocked || p.userOwnerBlocked}
+                      onChangeQuantity={onChangeQuantity}
+                      onDeleteItem={onDeleteItem}
+                    />
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
+
+          {/* Contenedor de la tarjeta */}
+          <Card
+            total={total}
+            buttonEnabled={formValues.some(
+              (e) =>
+                e.isBlocked ||
+                e.userOwnerBlocked ||
+                e.quantity > e.total_available
+            )}
+            onClick={onClickBuyButton}
+          />
         </div>
-
-        {modalOpen && (
-          <div className="fixed top-0 w-full h-full z-50 flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center justify-center gap-3 p-6 bg-white rounded-lg shadow-lg">
-              <h2>{t("cartPage", "areUSure")}</h2>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={toggleModal}
-                  className="bg-gray-400 py-3 px-4 text-white rounded"
-                >
-                  {t("cartPage", "cancel")}
-                </button>
-
-                <Link
-                  to="/"
-                  type="button"
-                  className="bg-blue-500 py-3 px-4 text-white rounded"
-                >
-                  {t("cartPage", "accept")}
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
       </main>
-
-      <Footer />
     </div>
   );
 };

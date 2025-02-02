@@ -1,4 +1,3 @@
-import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import React, { useEffect, useState } from "react";
@@ -20,11 +19,11 @@ const BeforeCartPage = () => {
 
   const isUserLogged = useAuthStore((e) => e.isUserLogged);
 
-  // useEffect(() => {
-  //   if (!isUserLogged()) {
-  //     navigate("/login");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!isUserLogged()) {
+      navigate("/login");
+    }
+  }, []);
 
   const { callService, errors, isLoading, data } =
     useServices<HistoricShoppingCartResponse>();
@@ -57,14 +56,16 @@ const BeforeCartPage = () => {
               <p>Cargando...</p>
             ) : (
               data?.map((item, index) => (
-                <HistoricCard key={index} date={item.date} products={item.products} />
+                <HistoricCard
+                  key={index}
+                  date={item.date}
+                  products={item.products}
+                />
               ))
             )}
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

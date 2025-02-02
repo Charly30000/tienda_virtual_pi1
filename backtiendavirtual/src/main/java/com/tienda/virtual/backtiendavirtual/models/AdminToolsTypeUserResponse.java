@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
         "username",
+        "email",
         "isBussiness",
         "isAdmin"
 })
@@ -14,6 +15,9 @@ public class AdminToolsTypeUserResponse {
 
     @JsonProperty("username")
     private String username;
+
+    @JsonProperty("email")
+    private String email;
 
     @JsonProperty("isBussiness")
     private boolean isBussiness;
@@ -24,8 +28,9 @@ public class AdminToolsTypeUserResponse {
     @JsonProperty("isBlocked")
     private boolean isBlocked;
 
-    public AdminToolsTypeUserResponse(String username, boolean isBussiness, boolean isAdmin, boolean isBlocked) {
+    public AdminToolsTypeUserResponse(String username, String email, boolean isBussiness, boolean isAdmin, boolean isBlocked) {
         this.username = username;
+        this.email = email;
         this.isBussiness = isBussiness;
         this.isAdmin = isAdmin;
         this.isBlocked = isBlocked;
@@ -39,6 +44,16 @@ public class AdminToolsTypeUserResponse {
     @JsonProperty("username")
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @JsonProperty("email")
+    public String getEmail() {
+        return email;
+    }
+
+    @JsonProperty("email")
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @JsonProperty("isBussiness")

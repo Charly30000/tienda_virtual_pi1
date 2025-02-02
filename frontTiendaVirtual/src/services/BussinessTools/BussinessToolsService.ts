@@ -56,7 +56,7 @@ export class BussinessToolsService {
    * @param id
    * @returns
    */
-  async blockProduct(id: number): Promise<GetProducts> {
+  async blockProduct(id: number): Promise<GenericResponse> {
     try {
       const response = await this.apiInstance.delete(`/delete/product/${id}`);
       return response.data;

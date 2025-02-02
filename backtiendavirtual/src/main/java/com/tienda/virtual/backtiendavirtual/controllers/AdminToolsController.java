@@ -84,6 +84,7 @@ public class AdminToolsController {
                     .peek(User::populateTransientFields)
                     .map(u -> new AdminToolsTypeUserResponse(
                             u.getUsername(),
+                            u.getEmail(),
                             u.getIsBussiness(),
                             u.getIsAdmin(),
                             !u.isEnabled()))

@@ -7,7 +7,7 @@ import Sidebar from "@/components/Sidebar";
 import Card from "@/components/Card";
 import { useTranslate } from "@/hooks/useTranslate";
 import { useAuthStore } from "@/store/authStore";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useServices } from "@/hooks/useServices";
 import { ProductsResponse } from "@/services/Products/Props/ProductsRequest";
 import { ProductService } from "@/services/Products/ProductService";
@@ -16,7 +16,7 @@ import { useProductStateStore } from "@/store/productStateStore";
 const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const changePriceOrder = useProductStateStore((e) => e.changePriceOrder);
   const changeNewestOrder = useProductStateStore((e) => e.changeNewestOrder);
@@ -33,16 +33,11 @@ const HomePage = () => {
   const t = useTranslate();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isUserLogged = useAuthStore((e) => e.isUserLogged);
 
-  // useEffect(() => {
-  //   if (!isUserLogged()) {
-  //     navigate("/login");
-  //   }
-  // }, []);
-
-  const { callService, errors, isLoading, data } =
+  const { callService, errors, isLoading, data, setData } =
     useServices<ProductsResponse>();
   const productService = new ProductService();
 
@@ -59,8 +54,17 @@ const HomePage = () => {
       console.error(errors);
     }
     if (fetchedData) {
-      console.log(fetchedData);
+      setData(fetchedData);
+      filterProducts(fetchedData.products);
     }
+  };
+
+  const filterProducts = (products) => {
+    const searchQuery = localStorage.getItem("searchQuery") || "";
+    const filtered = products.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredProducts(filtered);
   };
 
   const orderByPrice = async () => {
@@ -79,7 +83,7 @@ const HomePage = () => {
       console.error(errors);
     }
     if (data) {
-      console.log("data", data);
+      filterProducts(data.products);
     }
   };
 
@@ -99,7 +103,7 @@ const HomePage = () => {
       console.error(errors);
     }
     if (data) {
-      console.log("data", data);
+      filterProducts(data.products);
     }
   };
 
@@ -107,14 +111,37 @@ const HomePage = () => {
     callProductsService();
   }, []);
 
+  useEffect(() => {
+    if (location.pathname === "/" && data) {
+      filterProducts(data.products);
+    }
+  }, [location.pathname, data]);
+
+  useEffect(() => {
+    const handleSearchQueryUpdate = () => {
+      if (data) {
+        filterProducts(data.products);
+      }
+    };
+
+    window.addEventListener("searchQueryUpdated", handleSearchQueryUpdate);
+
+    return () => {
+      window.removeEventListener("searchQueryUpdated", handleSearchQueryUpdate);
+    };
+  }, [data]);
+
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
 
-  const paginatedData = data
-    ? data.products.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
+  const productsPerPage = filteredProducts.length
+    ? Math.ceil(filteredProducts.length / data.pages.totalPages)
+    : 0;
+  const displayedProducts = filteredProducts.length
+    ? filteredProducts.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
       )
     : [];
 
@@ -133,8 +160,14 @@ const HomePage = () => {
                 type="button"
                 className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100"
                 onClick={orderByPrice}
-                disabled={isLoading}>
-                {t("HomePage", "filterPrice")}
+                disabled={isLoading}
+              >
+                Filtro por antigüedad:{" "}
+                {order === "asc"
+                  ? "Más antiguo a más nuevo"
+                  : order === "desc"
+                  ? "Más nuevo a más antiguo"
+                  : "Sin uso de este filtro"}
               </button>
 
               <button
@@ -142,8 +175,14 @@ const HomePage = () => {
                 type="button"
                 className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100"
                 onClick={orderByAntique}
-                disabled={isLoading}>
-                {t("HomePage", "newProducts")}
+                disabled={isLoading}
+              >
+                Filtro por precio:{" "}
+                {price === "asc"
+                  ? "Más barato a más caro"
+                  : price === "desc"
+                  ? "Más caro a más barato"
+                  : "Sin uso de este filtro"}
               </button>
             </div>
           </div>
@@ -152,8 +191,8 @@ const HomePage = () => {
             <div className="grid grid-cols-4 gap-4">
               {isLoading
                 ? "Cargando datos..."
-                : paginatedData.length > 0
-                ? paginatedData.map((product) => (
+                : displayedProducts.length > 0
+                ? displayedProducts.map((product) => (
                     <Card
                       key={product.id}
                       name={product.name}
@@ -169,9 +208,7 @@ const HomePage = () => {
           <div className="pt-10 flex justify-center">
             <Stack spacing={2}>
               <Pagination
-                count={Math.ceil(
-                  (data ? data.products.length : 0) / itemsPerPage
-                )}
+                count={data ? data.pages.totalPages : 0}
                 page={currentPage}
                 onChange={handlePageChange}
                 variant="outlined"
@@ -181,8 +218,6 @@ const HomePage = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

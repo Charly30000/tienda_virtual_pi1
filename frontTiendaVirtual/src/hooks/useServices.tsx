@@ -50,5 +50,6 @@ export const useServices = <T,>() => {
     errors,
     isLoading,
     data,
+    setData, // Return setData so it can be used in other components
   };
 };

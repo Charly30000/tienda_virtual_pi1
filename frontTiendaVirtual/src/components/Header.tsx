@@ -3,39 +3,45 @@ import ShoppingBasket from "@mui/icons-material/ShoppingBasket";
 import Navbar from "./Navbar";
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
-import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
 import { useServices } from "@/hooks/useServices";
-import { HistoricShoppingCartResponse } from "@/services/ShoppingCart/Props/HistoricShoppingCartResponse";
+import icon from "@/assets/img/logo.png";
+import { ProductsResponse } from "@/services/Products/Props/ProductsResponse";
+import { ProductService } from "@/services/Products/ProductService";
 
 interface HeaderProps {
   toggleSidebar: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
-  const { callService, errors } = useServices<HistoricShoppingCartResponse>();
-  const shoppingCartService = new ShoppingCartService();
-
   const [products, setProducts] = useState<{ id: number; name: string }[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<
     { id: number; name: string }[]
   >([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const callTestService = async () => {
-    const fetchedData = await callService(shoppingCartService.historic());
+  const { callService, errors, isLoading, data } =
+    useServices<ProductsResponse>();
+  const productService = new ProductService();
+
+  const callProductsService = async () => {
+    const fetchedData = await callService(
+      productService.getProducts({
+        page: 1,
+        order: "asc",
+        price: "asc",
+        name: "",
+      })
+    );
     if (errors) {
       console.error(errors);
     }
     if (fetchedData) {
-      const flatProducts = fetchedData
-        .flatMap((entry) => entry.products)
-        .map((product) => ({ id: product.id, name: product.name }));
-      setProducts(flatProducts);
+      setProducts(fetchedData.products);
     }
   };
 
   useEffect(() => {
-    callTestService();
+    callProductsService();
   }, []);
 
   const handleSearchResults = (
@@ -44,6 +50,8 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   ) => {
     setFilteredProducts(results);
     setSearchQuery(query);
+    localStorage.setItem("searchQuery", query);
+    window.dispatchEvent(new Event("searchQueryUpdated"));
   };
 
   return (
@@ -57,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         />
 
         <Link to="/" className="uppercase text-white px-3">
-          <img src="src/assets/img/logo.png" alt="logo" className="w-[50px]" />
+          <img src={icon} alt="logo" className="w-[50px]" />
         </Link>
 
         <Navbar products={products} onSearch={handleSearchResults} />
@@ -72,24 +80,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 
         <Link
           to="/login"
-          className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100">
+          className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100"
+        >
           Logout
         </Link>
       </div>
-
-      {searchQuery && (
-        <div className="bg-white p-4 rounded-md mt-4 shadow-lg max-h-[300px] overflow-y-auto">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <Link to={`/product/${product.id}`} key={product.id}>
-                <div className="py-2">{product.name}</div>
-              </Link>
-            ))
-          ) : (
-            <p>Producto no encontrado</p>
-          )}
-        </div>
-      )}
     </div>
   );
 };

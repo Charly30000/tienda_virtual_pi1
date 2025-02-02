@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface NavbarProps {
   products: { id: number; name: string }[];
@@ -9,6 +9,16 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ products, onSearch }) => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      const savedSearch = localStorage.getItem("searchQuery");
+      if (savedSearch) {
+        setSearch(savedSearch);
+      }
+    }
+  }, [location.pathname]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -19,8 +29,8 @@ const Navbar: React.FC<NavbarProps> = ({ products, onSearch }) => {
       product.name.toLowerCase().includes(search.toLowerCase())
     );
     onSearch(filtered, search);
+    localStorage.setItem("searchQuery", search);
 
-    // Only navigate if the search query changes and the list is updated
     if (filtered.length > 0) {
       navigate("/");
     }

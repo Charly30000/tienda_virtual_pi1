@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Footer from "@/components/Footer";
+
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { useTranslate } from "@/hooks/useTranslate";
@@ -41,7 +41,10 @@ const ProductPage = () => {
           {product && (
             <div className="w-full mt-3 h-1/2 flex justify-between gap-3">
               <div className="w-1/3 h-3/4">
-                <img src={product.image || "src/assets/img/no-image.webp"} alt={product.name} />
+                <img
+                  src={product.image || "src/assets/img/no-image.webp"}
+                  alt={product.name}
+                />
               </div>
               <div className="w-1/3 flex flex-col items-center justify-center shadow-lg bg-blue-50 rounded-lg py-2 text-center gap-3">
                 <h3>{product.name}</h3>
@@ -58,10 +61,11 @@ const ProductPage = () => {
                 <p>{product.stock} disponibles</p>
                 <button
                   type="button"
-                  className={`bg-blue-500 py-2 px-5 text-white rounded-lg ${isAdded ? "opacity-50 cursor-not-allowed" : ""}`}
+                  className={`bg-blue-500 py-2 px-5 text-white rounded-lg ${
+                    isAdded ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                   onClick={handleAddProduct}
-                  disabled={isAdded}
-                >
+                  disabled={isAdded}>
                   {isAdded ? "Añadido" : t("product", "add")}
                 </button>
                 <p>Vendido por nosotros</p>
@@ -70,7 +74,6 @@ const ProductPage = () => {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
