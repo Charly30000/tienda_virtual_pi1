@@ -8,6 +8,8 @@ import { useProductStateStore } from "@/store/productStateStore";
 import { Paginator } from "@/components/Paginator";
 import { ProductsResponse } from "@/services/Products/Props/ProductsResponse";
 import Swal from "sweetalert2";
+import { AuthUtils } from "@/utils/AuthUtils";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,6 +22,7 @@ const HomePage = () => {
   const order = useProductStateStore((e) => e.getState().order);
   const price = useProductStateStore((e) => e.getState().price);
   const requestFindProduct = useProductStateStore((e) => e.requestFindProduct);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -71,10 +74,16 @@ const HomePage = () => {
       })
     );
   };
+  const isUserLogged = AuthUtils.getAuthDetails().token !== "";
+  useEffect(() => {
+    if (!isUserLogged) {
+      navigate("/login");
+    }
+  }, []);
 
   useEffect(() => {
     getProducts(1);
-  }, [requestFindProduct])
+  }, [requestFindProduct]);
 
   useEffect(() => {
     getProducts(1);

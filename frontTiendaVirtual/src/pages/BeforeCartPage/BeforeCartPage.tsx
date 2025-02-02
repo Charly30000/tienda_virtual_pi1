@@ -1,12 +1,12 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/store/authStore";
 import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
 import { useServices } from "@/hooks/useServices";
 import { HistoricShoppingCartResponse } from "@/services/ShoppingCart/Props/HistoricShoppingCartResponse";
 import HistoricCard from "@/components/HistoricCard";
+import { AuthUtils } from "@/utils/AuthUtils";
 
 const BeforeCartPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -17,10 +17,9 @@ const BeforeCartPage = () => {
 
   const navigate = useNavigate();
 
-  const isUserLogged = useAuthStore((e) => e.isUserLogged);
-
+  const isUserLogged = AuthUtils.getAuthDetails().token !== "";
   useEffect(() => {
-    if (!isUserLogged()) {
+    if (!isUserLogged) {
       navigate("/login");
     }
   }, []);
