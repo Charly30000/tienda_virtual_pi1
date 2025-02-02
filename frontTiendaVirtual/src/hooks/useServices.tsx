@@ -22,10 +22,10 @@ export const useServices = <T,>() => {
    */
   const callService = async (serviceCall: Promise<T>): Promise<T | null> => {
     if (isLoading || hasCalled.current) {
-      return null; // Evitar llamadas redundantes
+      return null;
     }
 
-    hasCalled.current = true; // Marcar como llamada realizada
+    hasCalled.current = true;
     setIsLoading(true);
     setErrors(null);
     setData(null);
@@ -50,6 +50,5 @@ export const useServices = <T,>() => {
     errors,
     isLoading,
     data,
-    setData, // Return setData so it can be used in other components
   };
 };

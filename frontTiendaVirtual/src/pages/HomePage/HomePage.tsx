@@ -1,22 +1,16 @@
-import React, { useEffect, useState } from "react";
-import Footer from "@/components/Footer";
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
 import Sidebar from "@/components/Sidebar";
 import Card from "@/components/Card";
-import { useTranslate } from "@/hooks/useTranslate";
-import { useAuthStore } from "@/store/authStore";
-import { useNavigate, useLocation } from "react-router-dom";
 import { useServices } from "@/hooks/useServices";
-import { ProductsResponse } from "@/services/Products/Props/ProductsRequest";
 import { ProductService } from "@/services/Products/ProductService";
 import { useProductStateStore } from "@/store/productStateStore";
+import { Paginator } from "@/components/Paginator";
+import { ProductsResponse } from "@/services/Products/Props/ProductsResponse";
+import Swal from "sweetalert2";
 
 const HomePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const changePriceOrder = useProductStateStore((e) => e.changePriceOrder);
   const changeNewestOrder = useProductStateStore((e) => e.changeNewestOrder);
@@ -25,73 +19,36 @@ const HomePage = () => {
   const name = useProductStateStore((e) => e.getState().name);
   const order = useProductStateStore((e) => e.getState().order);
   const price = useProductStateStore((e) => e.getState().price);
+  const requestFindProduct = useProductStateStore((e) => e.requestFindProduct);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const t = useTranslate();
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const isUserLogged = useAuthStore((e) => e.isUserLogged);
-
-  const { callService, errors, isLoading, data, setData } =
+  const { callService, errors, isLoading, data } =
     useServices<ProductsResponse>();
   const productService = new ProductService();
 
-  const callProductsService = async () => {
-    const fetchedData = await callService(
-      productService.getProducts({
-        page: 1,
-        order: "asc",
-        price: "asc",
-        name: "",
-      })
-    );
-    if (errors) {
-      console.error(errors);
-    }
-    if (fetchedData) {
-      setData(fetchedData);
-      filterProducts(fetchedData.products);
-    }
+  const onChangePage = (page: number) => {
+    getProducts(page);
   };
 
-  const filterProducts = (products) => {
-    const searchQuery = localStorage.getItem("searchQuery") || "";
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredProducts(filtered);
-  };
-
-  const orderByPrice = async () => {
-    flushOrder();
-    changePriceOrder();
-    const { name, order, price } = useProductStateStore.getState();
-    const data = await callService(
+  const getProducts = async (page: number) => {
+    await callService(
       productService.getProducts({
-        page: 1,
         name: name,
         order: order,
         price: price,
+        page: page,
       })
     );
-    if (errors) {
-      console.error(errors);
-    }
-    if (data) {
-      filterProducts(data.products);
-    }
   };
 
   const orderByAntique = async () => {
     flushPrice();
     changeNewestOrder();
     const { name, order, price } = useProductStateStore.getState();
-    const data = await callService(
+    await callService(
       productService.getProducts({
         page: 1,
         name: name,
@@ -99,51 +56,40 @@ const HomePage = () => {
         price: price,
       })
     );
-    if (errors) {
-      console.error(errors);
-    }
-    if (data) {
-      filterProducts(data.products);
-    }
+  };
+
+  const orderByPrice = async () => {
+    flushOrder();
+    changePriceOrder();
+    const { name, order, price } = useProductStateStore.getState();
+    await callService(
+      productService.getProducts({
+        page: 1,
+        name: name,
+        order: order,
+        price: price,
+      })
+    );
   };
 
   useEffect(() => {
-    callProductsService();
+    getProducts(1);
+  }, [requestFindProduct])
+
+  useEffect(() => {
+    getProducts(1);
   }, []);
 
   useEffect(() => {
-    if (location.pathname === "/" && data) {
-      filterProducts(data.products);
+    if (errors) {
+      Swal.fire(
+        "Error al cargar los productos",
+        "Ha ocurrido un error al cargar los productos:" +
+          JSON.stringify(errors),
+        "error"
+      );
     }
-  }, [location.pathname, data]);
-
-  useEffect(() => {
-    const handleSearchQueryUpdate = () => {
-      if (data) {
-        filterProducts(data.products);
-      }
-    };
-
-    window.addEventListener("searchQueryUpdated", handleSearchQueryUpdate);
-
-    return () => {
-      window.removeEventListener("searchQueryUpdated", handleSearchQueryUpdate);
-    };
-  }, [data]);
-
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
-
-  const productsPerPage = filteredProducts.length
-    ? Math.ceil(filteredProducts.length / (data?.pages?.totalPages || 1))
-    : 0;
-  const displayedProducts = filteredProducts.length
-    ? filteredProducts.slice(
-        (currentPage - 1) * productsPerPage,
-        currentPage * productsPerPage
-      )
-    : [];
+  }, [errors]);
 
   return (
     <div>
@@ -159,7 +105,7 @@ const HomePage = () => {
                 id="filterPrice"
                 type="button"
                 className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100"
-                onClick={orderByPrice}
+                onClick={orderByAntique}
                 disabled={isLoading}
               >
                 Filtro por antigüedad:{" "}
@@ -174,7 +120,7 @@ const HomePage = () => {
                 id="filterNew"
                 type="button"
                 className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100"
-                onClick={orderByAntique}
+                onClick={orderByPrice}
                 disabled={isLoading}
               >
                 Filtro por precio:{" "}
@@ -189,32 +135,25 @@ const HomePage = () => {
 
           <div className="w-full mt-3 h-1/2">
             <div className="grid grid-cols-4 gap-4">
-              {isLoading
-                ? "Cargando datos..."
-                : displayedProducts.length > 0
-                ? displayedProducts.map((product) => (
-                    <Card
-                      key={product.id}
-                      name={product.name}
-                      price={product.price}
-                      image={product.image}
-                      quantity={product.quantity}
-                    />
-                  ))
-                : "No data available"}
+              {data?.products.map((product) => (
+                <Card
+                  key={product.id}
+                  id={product.id}
+                  name={product.name}
+                  price={product.price}
+                  image={product.image}
+                  quantity={product.quantity}
+                />
+              ))}
             </div>
           </div>
 
           <div className="pt-10 flex justify-center">
-            <Stack spacing={2}>
-              <Pagination
-                count={data ? data.pages.totalPages : 0}
-                page={currentPage}
-                onChange={handlePageChange}
-                variant="outlined"
-                shape="rounded"
-              />
-            </Stack>
+            <Paginator
+              currentPage={data?.pages.actualPage || 1}
+              totalPages={data?.pages.totalPages || 1}
+              onChangePage={onChangePage}
+            />
           </div>
         </div>
       </main>

@@ -1,6 +1,8 @@
+import { API_CONFIG } from "@/config/ApiConfig";
 import { useTranslate } from "@/hooks/useTranslate";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import img from "@/assets/img/no-image.webp";
 
 const HistoricCard = ({ date, products }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -13,7 +15,10 @@ const HistoricCard = ({ date, products }) => {
 
   const totalAmount = products
     .reduce((sum, product) => sum + product.quantity * product.price, 0)
-    .toFixed(2);
+    .toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
 
   return (
     <div className="w-100 flex flex-col gap-2">
@@ -29,17 +34,33 @@ const HistoricCard = ({ date, products }) => {
         {isExpanded && (
           <div className="mt-2 flex flex-1 flex-col gap-5">
             {products.map((product, index) => (
-              <Link to="/product">
+              <Link to={`/product/${product.id}`}>
                 <div key={index} className="flex items-center justify-between">
                   <img
-                    src="src/assets/img/no-image.webp"
                     alt="No image"
                     className="h-[100px]"
+                    src={`${API_CONFIG.BASE_URL}${product.image}`}
+                    onError={(e) => (e.currentTarget.src = img)}
                   />
                   <span> {product.name}</span>
-                  <span>${product.price.toFixed(2)}</span>
-                  <span>{product.quantity}</span>
-                  <span>${(product.quantity * product.price).toFixed(2)}</span>
+                  <span>
+                    $
+                    {product.price.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                  <span>{product.quantity.toLocaleString("en-US")}</span>
+                  <span>
+                    $
+                    {(product.quantity * product.price).toLocaleString(
+                      "en-US",
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
+                  </span>
                 </div>
               </Link>
             ))}
@@ -50,7 +71,8 @@ const HistoricCard = ({ date, products }) => {
       <button
         onClick={toggleAccordion}
         type="button"
-        className="py-2 px-2 bg-blue-500 w-100 rounded-lg text-white">
+        className="py-2 px-2 bg-blue-500 w-100 rounded-lg text-white"
+      >
         {isExpanded ? "Contraer" : "Expandir"}
       </button>
     </div>

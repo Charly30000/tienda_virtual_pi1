@@ -1,8 +1,13 @@
 import { useTranslate } from "@/hooks/useTranslate";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import img from "@/assets/img/no-image.webp";
 import { GenericResponse } from "@/services/GenericResponse";
+import { API_CONFIG } from "@/config/ApiConfig";
+import { useServices } from "@/hooks/useServices";
+import { ProductService } from "@/services/Products/ProductService";
+import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
 
 interface CardProps {
   id: number;
@@ -14,54 +19,52 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ id, name, image, price, quantity }) => {
   const t = useTranslate();
+  const [added, setAdded] = useState(false);
 
-  const addProduct = async (productId: number): Promise<GenericResponse> => {
-    try {
-      const response = await axios.get(`/addProduct/${productId}`);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.data) {
-        const genericResponse: GenericResponse = error.response.data;
-        throw genericResponse;
-      } else {
-        console.error("Unknown error:", error);
-        throw {
-          message: "An unexpected error occurred",
-          status: 500,
-          error: true,
-        } as GenericResponse;
-      }
-    }
-  };
+  const { callService, errors } = useServices<GenericResponse>();
+  const shoppingCartService = new ShoppingCartService();
 
-  const handleAddProduct = async () => {
-    try {
-      const response = await addProduct(id);
-      console.log(response.message);
-    } catch (error) {
-      console.error(error);
+  const onAddProduct = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const data = await callService(shoppingCartService.addProduct(id));
+    if (data && !data.error) {
+      setAdded(true);
     }
   };
 
   return (
     <Link
-      to="/product"
-      className="flex flex-1 items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white ">
+      to={`product/${id}`}
+      className="flex flex-1 items-center p-2 flex-col gap-5 shadow-lg rounded-lg bg-white "
+    >
       <div className="rounded-lg">
-        <img src="src/assets/img/no-image.webp" alt="No image" />
+        <img
+          alt="No image"
+          src={`${API_CONFIG.BASE_URL}${image}`}
+          onError={(e) => (e.currentTarget.src = img)}
+        />
       </div>
 
       <h3>{name}</h3>
 
-      <p>${price}</p>
+      <p>${price.toLocaleString("en-US")}</p>
 
-      <p>{quantity} en stock</p>
+      <p>{quantity.toLocaleString("en-US")} en stock</p>
 
       <button
         type="button"
-        className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-500 ease-in duration-100 w-full"
-        onClick={handleAddProduct}>
-        {t("card", "add")}
+        disabled={added}
+        className={`px-4 py-2 rounded-md text-white transition-colors w-full
+    ${
+      added ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+    }
+  `}
+        onClick={onAddProduct}
+      >
+        {added ? "Añadido!" : "Añadir al carrito"}
       </button>
     </Link>
   );
