@@ -1,76 +1,190 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-
+import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import { useTranslate } from "@/hooks/useTranslate";
+import { useNavigate, useParams } from "react-router-dom";
+import { AuthUtils } from "@/utils/AuthUtils";
 import { ProductService } from "@/services/Products/ProductService";
+import { useServices } from "@/hooks/useServices";
+import { Product } from "@/services/Products/Props/ProductsResponse";
+import { API_CONFIG } from "@/config/ApiConfig";
+import image from "@/assets/img/no-image.webp";
+import Swal from "sweetalert2";
+import { ShoppingCartService } from "@/services/ShoppingCart/ShoppingCartService";
+import { GenericResponse } from "@/services/GenericResponse";
 
 const ProductPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [product, setProduct] = useState(null);
-  const [isAdded, setIsAdded] = useState(false);
-  const t = useTranslate();
-  const navigate = useNavigate();
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const [productAdded, setProductAdded] = useState(false);
+
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const isUserLogged = AuthUtils.getAuthDetails().token !== "";
+  const {
+    callService: callServiceGetProduct,
+    data: dataGetProduct,
+    errors: errorsGetProduct,
+  } = useServices<Product>();
+  const { callService: callServiceAddProduct, errors: errorsAddProduct } =
+    useServices<GenericResponse>();
+
   const productService = new ProductService();
+  const shoppingCartService = new ShoppingCartService();
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
+  const getProduct = async () => {
+    await callServiceGetProduct(productService.getProduct(Number(id)));
+  };
 
-  const fetchProduct = async () => {
-    try {
-      const fetchedProduct = await productService.getProduct(Number(id));
-      setProduct(fetchedProduct);
-    } catch (error) {
-      console.error("Error fetching product:", error);
+  const onAddProduct = async () => {
+    const data = await callServiceAddProduct(
+      shoppingCartService.addProduct(Number(id))
+    );
+    if (data && !data.error) {
+      setProductAdded(true);
     }
   };
 
-  const handleAddProduct = () => {
-    setIsAdded(true);
-  };
+  useEffect(() => {
+    if (!isUserLogged) {
+      navigate("/login");
+    }
+  }, [isUserLogged]);
+
+  useEffect(() => {
+    getProduct();
+  }, []);
+
+  useEffect(() => {
+    if (errorsGetProduct) {
+      Swal.fire(
+        "Error al cargar la pagina",
+        "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde por favor",
+        "error"
+      );
+    }
+    if (errorsAddProduct) {
+      Swal.fire(
+        "Error al añadir el producto",
+        "Ha ocurrido un error inesperado, vuelve a intentarlo más tarde por favor",
+        "error"
+      );
+    }
+  }, [errorsGetProduct, errorsAddProduct]);
 
   return (
-    <div>
-      <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-      <main className="relative bg-slate-100">
+    <div className="relative h-full">
+      <Header toggleSidebar={toggleSidebar} />
+      <main className="relative bg-slate-100 min-h-screen">
         <Sidebar sidebarOpen={sidebarOpen} />
-        <div className="px-10 py-2">
-          {product && (
-            <div className="w-full mt-3 h-1/2 flex justify-between gap-3">
-              <div className="w-1/3 h-3/4">
-                <img
-                  src={product.image || "src/assets/img/no-image.webp"}
-                  alt={product.name}
-                />
-              </div>
-              <div className="w-1/3 flex flex-col items-center justify-center shadow-lg bg-blue-50 rounded-lg py-2 text-center gap-3">
-                <h3>{product.name}</h3>
-                <div className="flex items-center gap-3">
-                  <p>{product.stock} disponibles</p>
-                  <p>{product.sold} vendidos</p>
+
+        <div className="p-4">
+          {dataGetProduct ? (
+            <div className="bg-white rounded-md shadow-md p-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="md:w-1/2 flex justify-center">
+                  <img
+                    src={`${API_CONFIG.BASE_URL}${dataGetProduct.image}`}
+                    alt="product image"
+                    className="object-cover rounded-md max-h-96"
+                    onError={(e) => (e.currentTarget.src = image)}
+                  />
                 </div>
-                <p>{product.description}</p>
-                <h4>Categorias: {product.categories.join(", ")}</h4>
-                {/* <h5>Etiquetas: {product.tags.join(", ")}</h5> */}
-              </div>
-              <div className="w-1/3 flex flex-col items-center justify-center shadow-lg bg-blue-50 rounded-lg py-2 text-center gap-3">
-                <h3>${product.price}</h3>
-                <p>{product.stock} disponibles</p>
-                <button
-                  type="button"
-                  className={`bg-blue-500 py-2 px-5 text-white rounded-lg ${
-                    isAdded ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  onClick={handleAddProduct}
-                  disabled={isAdded}>
-                  {isAdded ? "Añadido" : t("product", "add")}
-                </button>
-                <p>Vendido por nosotros</p>
+                <div className="md:w-1/2">
+                  <h1 className="text-2xl font-bold mb-2 text-gray-800">
+                    {dataGetProduct.name}
+                  </h1>
+                  <p className="text-gray-700 mb-4">
+                    {dataGetProduct.description}
+                  </p>
+
+                  <div className="mb-4">
+                    <p className="text-lg font-semibold text-gray-800">
+                      Precio:
+                      <span className="ml-1 text-blue-600">
+                        ${dataGetProduct.price}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Cantidad disponible: {dataGetProduct.quantity}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Vendidos: {dataGetProduct.sold}
+                    </p>
+                  </div>
+
+                  <div className="mb-4">
+                    <h3 className="text-gray-700 font-semibold">Categorías:</h3>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {dataGetProduct.categories?.map((category) => (
+                        <span
+                          key={category.id}
+                          className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded"
+                        >
+                          {category.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <h3 className="text-gray-700 font-semibold">Etiquetas:</h3>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {dataGetProduct.labels?.map((label) => (
+                        <span
+                          key={label.id}
+                          className="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded"
+                        >
+                          {label.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-500">
+                      Dueño del producto:{" "}
+                      <span className="font-semibold">
+                        {dataGetProduct.productOwner}
+                      </span>
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      Disponibilidad:{" "}
+                      {dataGetProduct.productBlocked ||
+                      dataGetProduct.userOwnerBlocked ||
+                      dataGetProduct.sold >= dataGetProduct.quantity ? (
+                        <span className="font-semibold text-red-600">No</span>
+                      ) : (
+                        <span className="font-semibold text-blue-600">Si</span>
+                      )}
+                    </p>
+                  </div>
+                  <button
+                    onClick={onAddProduct}
+                    disabled={
+                      dataGetProduct.productBlocked ||
+                      dataGetProduct.userOwnerBlocked ||
+                      dataGetProduct.sold >= dataGetProduct.quantity ||
+                      productAdded
+                    }
+                    className={`px-4 py-2 rounded-md text-white transition-colors
+    ${
+      dataGetProduct.productBlocked ||
+      dataGetProduct.userOwnerBlocked ||
+      dataGetProduct.sold >= dataGetProduct.quantity ||
+      productAdded
+        ? "bg-gray-400 cursor-not-allowed"
+        : "bg-blue-600 hover:bg-blue-700"
+    }
+  `}
+                  >
+                    {productAdded ? "Añadido!" : "Añadir al carrito"}
+                  </button>
+                </div>
               </div>
             </div>
+          ) : (
+            // Estado de carga
+            <p className="text-gray-700">Cargando producto...</p>
           )}
         </div>
       </main>

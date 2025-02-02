@@ -40,6 +40,7 @@ export const FindProducts = () => {
       showCancelButton: true,
       confirmButtonText: "Confirmar",
       cancelButtonText: "Cancelar",
+      icon: "question"
     }).then(async (result) => {
       if (result.isConfirmed) {
         const data = await callServiceBlockProduct(

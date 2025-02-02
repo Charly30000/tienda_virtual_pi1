@@ -88,6 +88,7 @@ const CartPage = () => {
       html: `El total de la compra será de $${total}.<br>La compra se enviará a tu dirección lo antes posible.`,
       showCancelButton: true,
       confirmButtonText: "Continuar con la compra",
+      icon: "question",
     }).then(async (result) => {
       if (result.isConfirmed) {
         const data = await callServiceBuy(shoppingCartService.buy());
@@ -198,12 +199,14 @@ const CartPage = () => {
           {/* Contenedor de la tarjeta */}
           <Card
             total={total}
-            buttonEnabled={formValues.some(
-              (e) =>
-                e.isBlocked ||
-                e.userOwnerBlocked ||
-                e.quantity > e.total_available
-            )}
+            buttonEnabled={
+              formValues.some(
+                (e) =>
+                  e.isBlocked ||
+                  e.userOwnerBlocked ||
+                  e.quantity > e.total_available
+              ) || formValues.length === 0
+            }
             onClick={onClickBuyButton}
           />
         </div>

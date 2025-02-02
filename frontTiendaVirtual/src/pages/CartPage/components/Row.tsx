@@ -1,5 +1,6 @@
 import { API_CONFIG } from "@/config/ApiConfig";
 import React from "react";
+import img from "@/assets/img/no-image.webp";
 
 interface CartProductProps {
   id: number;
@@ -31,6 +32,7 @@ export const Row: React.FC<CartProductProps> = ({
           src={`${API_CONFIG.BASE_URL}${image}`}
           className="w-16 md:w-32 max-w-full max-h-full"
           alt={image}
+          onError={(e) => (e.currentTarget.src = img)}
         />
       </td>
       <td className="px-6 py-4 font-semibold text-gray-900 dark:text-white">
